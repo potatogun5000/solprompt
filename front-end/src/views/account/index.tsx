@@ -174,7 +174,7 @@ export const AccountView: FC = ({}) => {
                     <tr className="table_content">
                       <th>{
                         imageMap.hasOwnProperty(item.pda.toBase58()) &&
-                          <Image src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${imageMap[item.pda.toBase58()]}`} width={50} height={50}/>
+                          <Image alt="idc" src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${imageMap[item.pda.toBase58()]}`} width={50} height={50}/>
                       }</th>
                       <th>{item.pda.toBase58().slice(0, 7)}</th>
                       <th>{item.engine}</th>

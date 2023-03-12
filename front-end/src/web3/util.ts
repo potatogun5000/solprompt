@@ -60,7 +60,7 @@ export const getSellerAccount = async (program, provider, publicKey) => {
 
   try {
     const sellerAccount = await program.account.seller.fetch(sellerPda);
-    return sellerAccount,
+    return sellerAccount;
   } catch (error) {
     return null;
   }
