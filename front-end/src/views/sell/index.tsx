@@ -77,10 +77,10 @@ export const SellView: FC = ({}) => {
 
       const sig = await sendTx(program, provider, wallet, tx);
 
-      return { sig, listingPda };
+      return { sig, listingPda, owner: publicKey };
     } catch (error: any) {
       console.log("error", `Transaction failed! ${error?.message}`);
-      return { sig: 0, listingPda: "none" };
+      return { sig: 0, listingPda: "none", owner: publicKey};
     }
   }, [publicKey, program, provider, wallet]);
 
@@ -110,11 +110,12 @@ export const SellView: FC = ({}) => {
       }
     }
 
-    const { sig, listingPda } = await createListingAccount();
+    const { sig, listingPda, owner } = await createListingAccount();
 
     (document.getElementById('listing_pda') as HTMLInputElement).value = (listingPda as any).toBase58();
     (document.getElementById('ai_settings') as HTMLInputElement).value = JSON.stringify(aiSettings);
     (document.getElementById('signature') as HTMLInputElement).value = sig;
+    (document.getElementById('owner') as HTMLInputElement).value = owner.toBase58();
     (document.getElementById('myform') as any).submit();
 
     setLoading(false);
@@ -150,6 +151,7 @@ export const SellView: FC = ({}) => {
             <input type="hidden" name="listing_pda" id="listing_pda" />
             <input type="hidden" name="ai_settings" id="ai_settings" />
             <input type="hidden" name="signature" id="signature" />
+            <input type="hidden" name="owner" id="owner" />
             <div className="mb-4">
               <label
                 htmlFor="first_name"
