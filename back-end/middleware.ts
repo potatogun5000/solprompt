@@ -17,6 +17,7 @@ export const validateListing = async (req, res, next) => {
       prompt: yup.string().required(),
       instructions: yup.string().required(),
       ai_settings: yup.string().required(),
+      owner: yup.string().required(),
     });
 
     const valid = await schema.isValid(req.body);
@@ -30,6 +31,7 @@ export const validateListing = async (req, res, next) => {
     res.locals.cleaned.title = escape(req.body.title);
     res.locals.cleaned.prompt = escape(req.body.prompt);
     res.locals.cleaned.instructions = escape(req.body.instructions);
+    res.locals.cleaned.owner = escape(req.body.owner);
     res.locals.cleaned.ai_settings = b58.encode(
       Buffer.from(req.body.ai_settings)
     );
@@ -62,7 +64,7 @@ export const uploadListing = async (req, res, next) => {
       );
     }
     await res.locals.db.exec(
-      `INSERT INTO prompts VALUES (NULL, "${res.locals.cleaned.listing_pda}", "${res.locals.cleaned.title}", "${res.locals.cleaned.prompt}", "${res.locals.cleaned.instructions}", "${res.locals.cleaned.ai_settings}", "${res.locals.cleaned.signature}", 0, 0, 0)`
+      `INSERT INTO prompts VALUES (NULL, "${res.locals.cleaned.listing_pda}", "${res.locals.cleaned.title}", "${res.locals.cleaned.prompt}", "${res.locals.cleaned.instructions}", "${res.locals.cleaned.ai_settings}", "${res.locals.cleaned.signature}", 0, 0, 0, "${res.locals.cleaned.owner}")`
     );
 
     res.redirect("https://solprompt.io/pending");
