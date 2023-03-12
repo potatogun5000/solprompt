@@ -60,10 +60,7 @@ export const getSellerAccount = async (program, provider, publicKey) => {
 
   try {
     const sellerAccount = await program.account.seller.fetch(sellerPda);
-    return {
-      sellerPda,
-      sellerAccount,
-    };
+    return sellerAccount,
   } catch (error) {
     return null;
   }
@@ -128,13 +125,19 @@ export const createListingItx = async (
   publicKey
 ) => {
   try {
+    let listingsAmount = 0;
+    if(sellerAccount){
+      listingsAmount = Number(sellerAccount.listings)
+    }
+
+
     const sellerPda = await getPda(program, "seller", [publicKey]);
     const statePda = await getPda(program, "state", []);
     const listingPda = await getDynamicPda(
       program,
       "listing",
       publicKey,
-      Number(sellerAccount.listings)
+      listingsAmount
     );
 
     const accounts = {

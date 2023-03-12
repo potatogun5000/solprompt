@@ -50,7 +50,7 @@ export const SellView: FC = ({}) => {
       return;
     }
     try {
-      const { sellerAccount, sellerPda } = await getSellerAccount(
+      let sellerAccount = await getSellerAccount(
         program,
         provider,
         publicKey
