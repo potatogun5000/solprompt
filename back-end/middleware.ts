@@ -1,0 +1,96 @@
+import b58 from "b58";
+import * as yup from "yup";
+
+export const setLocals = (db) => async (req, res, next) => {
+  res.locals.db = db;
+  next();
+};
+
+export const validateListing = async (req, res, next) => {
+  //TODO: do better
+
+  try {
+    let schema = yup.object().shape({
+      signature: yup.string().required(),
+      listing_pda: yup.string().required(),
+      title: yup.string().required(),
+      prompt: yup.string().required(),
+      instructions: yup.string().required(),
+      ai_settings: yup.string().required(),
+    });
+
+    const valid = await schema.isValid(req.body);
+
+    if (!valid) throw new Error("bad input");
+
+    res.locals.cleaned = {};
+
+    res.locals.cleaned.signature = escape(req.body.signature);
+    res.locals.cleaned.listing_pda = escape(req.body.listing_pda);
+    res.locals.cleaned.title = escape(req.body.title);
+    res.locals.cleaned.prompt = escape(req.body.prompt);
+    res.locals.cleaned.instructions = escape(req.body.instructions);
+    res.locals.cleaned.ai_settings = b58.encode(
+      Buffer.from(req.body.ai_settings)
+    );
+
+    console.log(res.locals);
+
+    next();
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const getAllListings = async (req, res, next) => {
+  try {
+    const result = await res.locals.db.all("SELECT * FROM prompts");
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadListing = async (req, res, next) => {
+  try {
+    for (let i = 0; i < req.files.length; i++) {
+      await res.locals.db.exec(
+        `INSERT INTO images VALUES ("${
+          res.locals.cleaned.listing_pda
+        }", "${escape(req.files[i].filename)}")`
+      );
+    }
+    await res.locals.db.exec(
+      `INSERT INTO prompts VALUES (NULL, "${res.locals.cleaned.listing_pda}", "${res.locals.cleaned.title}", "${res.locals.cleaned.prompt}", "${res.locals.cleaned.instructions}", "${res.locals.cleaned.ai_settings}", "${res.locals.cleaned.signature}", 0, 0, 0)`
+    );
+
+    res.redirect("https://solprompt.io/pending");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getListing = async (req, res, next) => {
+  try {
+    const listingInfo = await res.locals.db.get(
+      "SELECT * FROM prompts WHERE listing_pda = ?",
+      req.params.id
+    );
+    const allImages = await res.locals.db.all(
+      `SELECT filename FROM images WHERE listing_pda = "${req.params.id}"`
+    );
+
+    res.send({
+      ...listingInfo,
+      images: allImages.map((f) => f.filename),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const errorHandler = async (err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("error");
+};
