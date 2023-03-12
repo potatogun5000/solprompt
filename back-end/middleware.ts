@@ -86,7 +86,7 @@ export const getListing = async (req, res, next) => {
       images: allImages.map((f) => f.filename),
     });
   } catch (error) {
-    next(error);
+    res.send('does not exist');
   }
 };
 
@@ -94,3 +94,5 @@ export const errorHandler = async (err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("error");
 };
+
+

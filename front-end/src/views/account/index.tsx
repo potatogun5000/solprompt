@@ -65,12 +65,49 @@ export const AccountView: FC = ({}) => {
   const [balance, setBalance] = useState(-1);
   const [sales, setSales] = useState(-1);
   const [listings, setListings] = useState([]);
+  const [imageMap, setImageMap] = useState({});
   const [loaded, setLoaded] = useState(false);
+
+  const getImage = pda => {
+    if(imageMap[pda.toBase58()])
+      return imageMap[pda.toBase58()];
+
+    return 'cant load';
+  }
+
+  const getImages = async (listings) => {
+    console.log('get images')
+
+
+    for(let i = 0; i < listings.length; i++){
+      try{
+        console.log(listings[i])
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_SERVER}/listing/${listings[i].pda.toBase58()}`
+        );
+        const json = await response.json();
+
+        console.log(json.images.length)
+        if(json?.images.length){
+          const _imageMap = imageMap;
+          _imageMap[listings[i].pda.toBase58()] = json.images[0]
+
+          setImageMap(JSON.parse(JSON.stringify(_imageMap)));
+        }
+      }catch(error){
+        //console.log(error);
+      }
+    }
+  }
+
+  useEffect( () => {
+    getImages(listings);
+    }, [listings])
 
   const getAccounts = async (program, provider, publicKey) => {
     const lists = await getListingAccounts(program, provider, publicKey);
 
-    setListings(lists);
+    setListings(lists.reverse());
   };
 
   const getUser = async (program, provider, publicKey) => {
@@ -124,8 +161,9 @@ export const AccountView: FC = ({}) => {
             ) : (
               <table style={{ width: 600, textAlign: "left" }}>
                 <tr className="table_header">
-                  <td>address</td>
-                  <td>ai</td>
+                  <td></td>
+                  <td>id</td>
+                  <td>type</td>
                   <td>price</td>
                   <td>sales</td>
                   <td>approved</td>
@@ -134,6 +172,10 @@ export const AccountView: FC = ({}) => {
                 {listings.map((item) => (
                   <>
                     <tr className="table_content">
+                      <th>{
+                        imageMap.hasOwnProperty(item.pda.toBase58()) &&
+                          <Image src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${imageMap[item.pda.toBase58()]}`} width={50} height={50}/>
+                      }</th>
                       <th>{item.pda.toBase58().slice(0, 7)}</th>
                       <th>{item.engine}</th>
                       <th>{Number(item.price)} SOL</th>

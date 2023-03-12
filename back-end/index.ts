@@ -15,9 +15,11 @@ import {
   getListing,
   getAllListings,
   setLocals,
-  errorHandler,
+  errorHandler
 } from "./middleware";
 import { Connection } from "@solana/web3.js";
+import cors from 'cors';
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -52,6 +54,7 @@ if (!fs.existsSync(`./${publicFolder}`)) {
 
   approveSigsLoop(db, connection);
 
+  app.use(cors())
   app.use("/static", express.static(publicFolder));
   app.use(bodyParser.json());
   app.use(setLocals(db));
