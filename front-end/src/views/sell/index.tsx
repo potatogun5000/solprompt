@@ -49,11 +49,7 @@ export const SellView: FC = ({}) => {
       console.log("error", `Send Transaction: Wallet not connected!`);
       return;
     }
-    let sellerAccount = await getSellerAccount(
-      program,
-      provider,
-      publicKey
-    );
+    let sellerAccount = await getSellerAccount(program, provider, publicKey);
 
     const tx = new Transaction();
     if (!sellerAccount) {
@@ -80,41 +76,99 @@ export const SellView: FC = ({}) => {
   }, [publicKey, program, provider, wallet]);
 
   const handleSubmit = async (event) => {
-    if(loading)
-      return;
+    if (loading) return;
 
     setLoading(true);
-    const aiType = (document.getElementById('aiType') as HTMLInputElement).value;
+
+    const aiType = (document.getElementById("aiType") as HTMLInputElement)
+      .value;
     let aiSettings = {
-      aiType
+      aiType,
     } as any;
 
-    if(aiType === 'mid_journey'){
-      aiSettings.mjSettings = (document.getElementById('mj_settings') as HTMLInputElement).value;
-    }else{ //otherwise stable diffusion
+    if (aiType === "mid_journey") {
+      aiSettings.mjSettings = (
+        document.getElementById("mj_settings") as HTMLInputElement
+      ).value;
+
+      if (!aiSettings.mjSettings) {
+        alert("Enabled Settings required");
+        return setLoading(false);
+      }
+    } else {
+      //otherwise stable diffusion
       aiSettings = {
-        version: (document.getElementById('sd_version') as HTMLInputElement).value,
-        sampler: (document.getElementById('sd_sampler') as HTMLInputElement).value,
-        imageWidth: (document.getElementById('sd_width') as HTMLInputElement).value,
-        imageHeight: (document.getElementById('sd_height') as HTMLInputElement).value,
-        cfgScale: (document.getElementById('sd_cfg_scale') as HTMLInputElement).value,
-        steps: (document.getElementById('sd_steps') as HTMLInputElement).value,
-        clipGuidance: (document.getElementById('sd_clip') as HTMLInputElement).value,
-        negativePrompt: (document.getElementById('sd_negative_prompt') as HTMLInputElement).value,
-        aiType
+        version: (document.getElementById("sd_version") as HTMLInputElement)
+          .value,
+        sampler: (document.getElementById("sd_sampler") as HTMLInputElement)
+          .value,
+        imageWidth: (document.getElementById("sd_width") as HTMLInputElement)
+          .value,
+        imageHeight: (document.getElementById("sd_height") as HTMLInputElement)
+          .value,
+        cfgScale: (document.getElementById("sd_cfg_scale") as HTMLInputElement)
+          .value,
+        steps: (document.getElementById("sd_steps") as HTMLInputElement).value,
+        clipGuidance: (document.getElementById("sd_clip") as HTMLInputElement)
+          .value,
+        negativePrompt: (
+          document.getElementById("sd_negative_prompt") as HTMLInputElement
+        ).value,
+        aiType,
+      };
+
+      if (aiSettings.version === "-- select an option --") {
+        alert("Version required");
+        return setLoading(false);
+      }
+
+      if (aiSettings.clipGuidance === "-- select an option --") {
+        alert("Clip Guidance required");
+        return setLoading(false);
+      }
+
+      if (aiSettings.sampler === "-- select an option --") {
+        alert("sampler required");
+        return setLoading(false);
+      }
+
+      if (aiSettings.imageWidth.trim() === "") {
+        alert("image width required");
+        return setLoading(false);
+      }
+      if (aiSettings.imageHeight.trim() === "") {
+        alert("image height required");
+        return setLoading(false);
+      }
+      if (aiSettings.cfgScale.trim() === "") {
+        alert("CFG scale required");
+        return setLoading(false);
+      }
+      if (aiSettings.steps.trim() === "") {
+        alert("Steps required");
+        return setLoading(false);
       }
     }
 
-    try{
+    if (images.length < 5 || images.length > 10) {
+      alert("5 to 10 images required");
+      return setLoading(false);
+    }
+
+    try {
       const { sig, listingPda, owner } = await createListingAccount();
 
-      (document.getElementById('listing_pda') as HTMLInputElement).value = (listingPda as any).toBase58();
-      (document.getElementById('ai_settings') as HTMLInputElement).value = JSON.stringify(aiSettings);
-      (document.getElementById('signature') as HTMLInputElement).value = sig;
-      (document.getElementById('owner') as HTMLInputElement).value = owner.toBase58();
+      (document.getElementById("listing_pda") as HTMLInputElement).value = (
+        listingPda as any
+      ).toBase58();
+      (document.getElementById("ai_settings") as HTMLInputElement).value =
+        JSON.stringify(aiSettings);
+      (document.getElementById("signature") as HTMLInputElement).value = sig;
+      (document.getElementById("owner") as HTMLInputElement).value =
+        owner.toBase58();
 
-      (document.getElementById('myform') as any).submit();
-    }catch(error){
+      (document.getElementById("myform") as any).submit();
+    } catch (error) {
       console.log(error);
     }
 
@@ -243,7 +297,6 @@ export const SellView: FC = ({}) => {
                 ))}
               </div>
             </div>
-
 
             <div className="mb-4">
               <label
@@ -472,24 +525,22 @@ export const SellView: FC = ({}) => {
                 className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               ></textarea>
             </div>
-
-            </form>
+          </form>
           {publicKey && (
-              <button
-                id="submit_btn"
-                onClick={handleSubmit}
-                className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800"
-                disabled={loading} 
-              >
-                {loading ? 'Loading' : 'Create Listing'}
-              </button>
-            )}
-            {!publicKey && (
-              <div className="mt-10">
-                <WalletMultiButtonDynamic className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800" />
-              </div>
-            )}
-
+            <button
+              id="submit_btn"
+              onClick={handleSubmit}
+              className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800"
+              disabled={loading}
+            >
+              {loading ? "Loading" : "Create Listing"}
+            </button>
+          )}
+          {!publicKey && (
+            <div className="mt-10">
+              <WalletMultiButtonDynamic className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800" />
+            </div>
+          )}
         </div>
       </div>
     </div>
