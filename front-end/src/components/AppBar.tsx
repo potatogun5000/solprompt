@@ -31,7 +31,7 @@ export const AppBar: React.FC = () => {
 
 />
             <Text variant="sub-heading" className="ml-1 pt-3">
-              dasdada
+             solprompt.io 
             </Text>
             </div>
           </div>
