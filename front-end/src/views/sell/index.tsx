@@ -26,7 +26,7 @@ const WalletMultiButtonDynamic = dynamic(
     (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
   { ssr: false }
 );
-
+ 
 export const SellView: FC = ({}) => {
   const { connection } = useConnection();
   const wallet = useWallet();
