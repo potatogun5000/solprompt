@@ -65,7 +65,7 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   app.use(cors());
   app.use("/static", express.static(publicFolder));
   app.use(bodyParser.json());
-  app.use(setLocals(db));
+  app.use(setLocals(db, approvedCache));
   app.use(errorHandler);
 
   app.get("/hello", (req, res, next) => res.send("henlo"));

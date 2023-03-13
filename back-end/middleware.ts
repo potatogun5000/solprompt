@@ -1,8 +1,9 @@
 import b58 from "b58";
 import * as yup from "yup";
 
-export const setLocals = (db) => async (req, res, next) => {
+export const setLocals = (db, approvedCache) => async (req, res, next) => {
   res.locals.db = db;
+  res.locals.approvedCache = approvedCache;
   next();
 };
 
@@ -75,10 +76,7 @@ export const approveListing = async (req, res, next) => {
 };
 
 export const getApprovedListings = async (req, res, next) => {
-  const result = await res.locals.db.all(
-    "SELECT * FROM prompts WHERE approved = 1"
-  );
-  res.send(result);
+  res.send(res.locals.approvedCache);
 };
 
 export const getAllListings = async (req, res, next) => {

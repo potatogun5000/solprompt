@@ -11,7 +11,7 @@ export const createTables = async (db) => {
 
 export const approvedCacheLoop = async (db, connection, approvedCache) => {
   try {
-    const result = await db.all("SELECT * FROM prompts WHERE approved = 1");
+    const result = await db.all("SELECT * FROM prompts WHERE approved = 1 AND confirmed = 1");
 
     for (let i = 0; i < result.length; i++) {
       const images = await db.all(
