@@ -56,7 +56,7 @@ export const getPendingListings = async (req, res, next) => {
 
   for (let i = 0; i < result.length; i++) {
     const images = await res.locals.db.all(
-      "SELECT * FROM images WHERE listing_pda = ?",
+      "SELECT filename FROM images WHERE listing_pda = ?",
       result[i].listing_pda
     );
 

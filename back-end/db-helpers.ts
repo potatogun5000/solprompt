@@ -13,7 +13,7 @@ export const approvedCacheLoop = async (db, connection, approvedCache) => {
 
 
     for(let i = 0; i < result.length; i++){
-      const images = await db.all("SELECT * FROM images WHERE listing_pda = ?", result[i].listing_pda);
+      const images = await db.all("SELECT filename FROM images WHERE listing_pda = ?", result[i].listing_pda);
 
       result[i].images = images;
     }

@@ -1,4 +1,27 @@
 import { useEffect, useState, useRef } from "react";
+import b58 from "b58";
+
+const ShowSettings = (props) => {
+  const data = JSON.parse(b58.decode(props.data).toString());
+  return (
+    <table
+      id="customers"
+      style={{
+      }}
+    >
+      <tr>
+        {Object.keys(data).map((key, index) => (
+          <th key={`kaey-${index}`}>{key}</th>
+        ))}
+      </tr>
+      <tr>
+        {Object.keys(data).map((key, index) => (
+          <td key={`key-${index}`}>{unescape(data[key])}</td>
+        ))}
+      </tr>
+    </table>
+  );
+};
 
 function App() {
   const [pw, setPw] = useState(null);
@@ -43,8 +66,8 @@ function App() {
             style={{
               backgroundColor: selectedPrompt === index ? "blue" : "yellow",
               color: selectedPrompt === index ? "white" : "black",
-              width:25,
-              height:25
+              width: 25,
+              height: 25,
             }}
           >
             {index}
@@ -54,24 +77,52 @@ function App() {
       <div style={{ margin: 50 }}>
         <h3>selected id: {selectedPrompt}</h3>
       </div>
-      <div>
-        {
-          images.map( (image, index) => (
-            <img src={image} key={`image-${index}`}/>
-          ))
-        }
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        {data.length &&
+          data[selectedPrompt].images.map((item, index) => (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <img
+                src={`https://api.solprompt.io/static/${item.filename}`}
+                key={`image-${index}`}
+              />
+              <a
+                href={`https://api.solprompt.io/static/${item.filename}`}
+                key={`iamage-${index}`}
+                target="_blank"
+              >
+                open
+              </a>
+            </div>
+          ))}
       </div>
-      <ul style={{textAlign: 'center'}}>
+      <ul style={{ textAlign: "center" }}>
         {data.length &&
           Object.keys(data[selectedPrompt]).map((key, index) => (
             <>
-              <li key={`ikey-${index}`} style={{ fontWeight: "bold", listStyleType: 'none'}}>
+              <li
+                key={`ikey-${index}`}
+                style={{ fontWeight: "bold", listStyleType: "none" }}
+              >
                 {key}
               </li>
               <li key={`key-${index}`} style={{ listStyleType: "none" }}>
-                {unescape(data[selectedPrompt][key])}
+                {key === "ai_settings" ? (
+                  <ShowSettings data={data[selectedPrompt][key]} />
+                ) : (
+                  unescape(data[selectedPrompt][key])
+                )}
               </li>
-              <li style={{ listStyleType: "none", marginBottom: 20}}></li>
+              <li style={{ listStyleType: "none", marginBottom: 20 }}></li>
             </>
           ))}
       </ul>
@@ -105,31 +156,6 @@ function App() {
           Accept
         </button>
       </div>
-      {/*
-      <table
-        id="customers"
-        style={{
-          display: "block",
-          maxWidth: "100%",
-          overflow: "scroll",
-          height: 1000,
-          width: "100%",
-        }}
-      >
-        <tr style={{backgroundColor:'black', color:'white', marginBottom:20}}>
-          {data.length &&
-            Object.keys(data[0]).map((key, index) => (
-              <th key={`kaey-${index}`}>{key}</th>
-            ))}
-        </tr>
-        {data.map((item, index) => (
-          <tr key={`item-${index}`}>
-            {Object.keys(item).map((key, index) => (
-              <th key={`key-${index}`}>{unescape(item[key])}</th>
-            ))}
-          </tr>
-        ))}
-      </table>*/}
     </div>
   );
 }
