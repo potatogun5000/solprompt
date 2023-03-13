@@ -8,7 +8,7 @@ import fs from "fs";
 import path from "path";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import { createTables, approveSigsLoop, approvedCacheLoop } from "./db-helpers";
+import { createTables, approvePromptsLoop, confirmPromptsLoop, approvedCacheLoop } from "./db-helpers";
 import {
   validateListing,
   uploadListing,
@@ -58,7 +58,8 @@ if (!fs.existsSync(`./${publicFolder}`)) {
 
   await createTables(db);
 
-  approveSigsLoop(db, connection);
+  confirmPromptsLoop(db, connection);
+  approvePromptsLoop(db, connection);
   approvedCacheLoop(db, connection, approvedCache);
 
   app.use(cors());

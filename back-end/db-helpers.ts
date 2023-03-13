@@ -1,3 +1,5 @@
+import { PublicKey } from "@solana/web3.js";
+
 export const createTables = async (db) => {
   await db.exec(
     "CREATE TABLE IF NOT EXISTS prompts(id integer primary key, listing_pda TEXT, title TEXT, prompt TEXT, instructions TEXT, ai_settings TEXT, signature TEXT, confirmed INTEGER, approved INTEGER, tries INTEGER, owner TEXT, UNIQUE(signature))"
@@ -11,9 +13,11 @@ export const approvedCacheLoop = async (db, connection, approvedCache) => {
   try {
     const result = await db.all("SELECT * FROM prompts WHERE approved = 1");
 
-
-    for(let i = 0; i < result.length; i++){
-      const images = await db.all("SELECT filename FROM images WHERE listing_pda = ?", result[i].listing_pda);
+    for (let i = 0; i < result.length; i++) {
+      const images = await db.all(
+        "SELECT filename FROM images WHERE listing_pda = ?",
+        result[i].listing_pda
+      );
 
       result[i].images = images;
     }
@@ -26,7 +30,37 @@ export const approvedCacheLoop = async (db, connection, approvedCache) => {
   return approvedCacheLoop(db, connection, approvedCache);
 };
 
-export const approveSigsLoop = async (db, connection) => {
+export const approvePromptsLoop = async (db, connection) => {
+  try {
+    const result = await db.all(
+      "SELECT * FROM prompts WHERE approved = 0 AND confirmed = 1"
+    );
+
+    for (let i = 0; i < result.length; i++) {
+      const info = await connection.getAccountInfo(
+        new PublicKey(result[i].listing_pda)
+      );
+
+      if (info.owner.toBase58() !== process.env.CONTRACT_ID) continue;
+
+      const bytes = new Uint8Array(info.data);
+      const isApproved = bytes[103];
+
+      if (isApproved !== 1) continue;
+
+      await db.run(
+        "UPDATE prompts SET approved = 1 WHERE id = ?",
+        result[i].id
+      );
+    }
+  } catch (error) {
+    console.log("somethings wrong", error);
+  }
+  await new Promise((r) => setTimeout(r, 1000 * 10));
+  return approvePromptsLoop(db, connection);
+};
+
+export const confirmPromptsLoop = async (db, connection) => {
   try {
     const result = await db.all("SELECT * FROM prompts WHERE confirmed = 0");
 
@@ -61,5 +95,5 @@ export const approveSigsLoop = async (db, connection) => {
   }
 
   await new Promise((r) => setTimeout(r, 5000));
-  return approveSigsLoop(db, connection);
+  return confirmPromptsLoop(db, connection);
 };
