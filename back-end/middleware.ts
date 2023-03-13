@@ -53,6 +53,16 @@ export const getPendingListings = async (req, res, next) => {
   const result = await res.locals.db.all(
     "SELECT * FROM prompts WHERE approved = 0 AND confirmed = 1"
   );
+
+  for (let i = 0; i < result.length; i++) {
+    const images = await res.locals.db.all(
+      "SELECT * FROM images WHERE listing_pda = ?",
+      result[i].listing_pda
+    );
+
+    result[i].images = images;
+  }
+
   res.send(result);
 };
 

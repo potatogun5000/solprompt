@@ -11,6 +11,13 @@ export const approvedCacheLoop = async (db, connection, approvedCache) => {
   try {
     const result = await db.all("SELECT * FROM prompts WHERE approved = 1");
 
+
+    for(let i = 0; i < result.length; i++){
+      const images = await db.all("SELECT * FROM images WHERE listing_pda = ?", result[i].listing_pda);
+
+      result[i].images = images;
+    }
+
     approvedCache = result;
   } catch (error) {
     console.log(error);
