@@ -49,39 +49,34 @@ export const SellView: FC = ({}) => {
       console.log("error", `Send Transaction: Wallet not connected!`);
       return;
     }
-    try {
-      let sellerAccount = await getSellerAccount(
+    let sellerAccount = await getSellerAccount(
+      program,
+      provider,
+      publicKey
+    );
+
+    const tx = new Transaction();
+    if (!sellerAccount) {
+      const createSellerItx = await createSellerAccountItx(
         program,
         provider,
         publicKey
       );
 
-      const tx = new Transaction();
-      if (!sellerAccount) {
-        const createSellerItx = await createSellerAccountItx(
-          program,
-          provider,
-          publicKey
-        );
-
-        tx.add(createSellerItx);
-      }
-
-      const { listingItx, listingPda } = await createListingItx(
-        program,
-        provider,
-        sellerAccount,
-        publicKey
-      );
-      tx.add(listingItx);
-
-      const sig = await sendTx(program, provider, wallet, tx);
-
-      return { sig, listingPda, owner: publicKey };
-    } catch (error: any) {
-      console.log("error", `Transaction failed! ${error?.message}`);
-      return { sig: 0, listingPda: "none", owner: publicKey};
+      tx.add(createSellerItx);
     }
+
+    const { listingItx, listingPda } = await createListingItx(
+      program,
+      provider,
+      sellerAccount,
+      publicKey
+    );
+    tx.add(listingItx);
+
+    const sig = await sendTx(program, provider, wallet, tx);
+
+    return { sig, listingPda, owner: publicKey };
   }, [publicKey, program, provider, wallet]);
 
   const handleSubmit = async (event) => {
@@ -110,13 +105,18 @@ export const SellView: FC = ({}) => {
       }
     }
 
-    const { sig, listingPda, owner } = await createListingAccount();
+    try{
+      const { sig, listingPda, owner } = await createListingAccount();
 
-    (document.getElementById('listing_pda') as HTMLInputElement).value = (listingPda as any).toBase58();
-    (document.getElementById('ai_settings') as HTMLInputElement).value = JSON.stringify(aiSettings);
-    (document.getElementById('signature') as HTMLInputElement).value = sig;
-    (document.getElementById('owner') as HTMLInputElement).value = owner.toBase58();
-    (document.getElementById('myform') as any).submit();
+      (document.getElementById('listing_pda') as HTMLInputElement).value = (listingPda as any).toBase58();
+      (document.getElementById('ai_settings') as HTMLInputElement).value = JSON.stringify(aiSettings);
+      (document.getElementById('signature') as HTMLInputElement).value = sig;
+      (document.getElementById('owner') as HTMLInputElement).value = owner.toBase58();
+
+      (document.getElementById('myform') as any).submit();
+    }catch(error){
+      console.log(error);
+    }
 
     setLoading(false);
   };
@@ -146,7 +146,6 @@ export const SellView: FC = ({}) => {
             method="post"
             name="myform"
             encType="multipart/form-data"
-            onSubmit={handleSubmit}
           >
             <input type="hidden" name="listing_pda" id="listing_pda" />
             <input type="hidden" name="ai_settings" id="ai_settings" />
@@ -476,13 +475,14 @@ export const SellView: FC = ({}) => {
 
             </form>
           {publicKey && (
-              <input
+              <button
                 id="submit_btn"
-                type="submit"
                 onClick={handleSubmit}
                 className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800"
-                value="Create Listing"
-              />
+                disabled={loading} 
+              >
+                {loading ? 'Loading' : 'Create Listing'}
+              </button>
             )}
             {!publicKey && (
               <div className="mt-10">
