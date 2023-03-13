@@ -37,21 +37,25 @@ export const approvePromptsLoop = async (db, connection) => {
     );
 
     for (let i = 0; i < result.length; i++) {
-      const info = await connection.getAccountInfo(
-        new PublicKey(result[i].listing_pda)
-      );
+      try {
+        const info = await connection.getAccountInfo(
+          new PublicKey(result[i].listing_pda)
+        );
 
-      if (info.owner.toBase58() !== process.env.CONTRACT_ID) continue;
+        if (info.owner.toBase58() !== process.env.CONTRACT_ID) continue;
 
-      const bytes = new Uint8Array(info.data);
-      const isApproved = bytes[103];
+        const bytes = new Uint8Array(info.data);
+        const isApproved = bytes[103];
 
-      if (isApproved !== 1) continue;
+        if (isApproved !== 1) continue;
 
-      await db.run(
-        "UPDATE prompts SET approved = 1 WHERE id = ?",
-        result[i].id
-      );
+        await db.run(
+          "UPDATE prompts SET approved = 1 WHERE id = ?",
+          result[i].id
+        );
+      } catch (err) {
+        console.log("problem with ", i, err.message);
+      }
     }
   } catch (error) {
     console.log("somethings wrong", error);
