@@ -4,7 +4,8 @@ import Image from "next/image";
 import pkg from "../../../package.json";
 import Text from "../../components/Text";
 
-const Listing: FC = ({ images, title, listingPda}) => {
+const Listing = (props): JSX.Element => {
+  const { images, title, listingPda} = props as any;
   return (
     <Link href={`/detail?id=${listingPda}`} style={{width:'100%', margin: 5}}>
     <div style={{ width: "100%"}}>
@@ -98,7 +99,7 @@ export const HomeView: FC = ({}) => {
           <hr />
           <div className="flex flex-row justify-center pt-5">
             {data.slice(6, 12).map((item, index) => (
-              <Listing images={item.images} title={item.title} listingPda={item.listing_pda}/>
+              <Listing images={item.images as any} title={item.title} listingPda={item.listing_pda}/>
             ))}
           </div>
         </div>
