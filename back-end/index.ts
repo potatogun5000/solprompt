@@ -8,18 +8,23 @@ import fs from "fs";
 import path from "path";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import { createTables, approveSigsLoop } from "./db-helpers";
+import { createTables, approveSigsLoop, approvedCacheLoop } from "./db-helpers";
 import {
   validateListing,
   uploadListing,
   getListing,
   getAllListings,
+  getPendingListings,
+  approveListing,
+  requireAdmin,
   setLocals,
-  errorHandler
+  errorHandler,
+  getApprovedListings,
 } from "./middleware";
 import { Connection } from "@solana/web3.js";
-import cors from 'cors';
-
+import cors from "cors";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -36,9 +41,10 @@ const storage = multer.diskStorage({
   },
 });
 
-const connection = new Connection("https://api.devnet.solana.com");
+const connection = new Connection(process.env.SOL_RPC);
 const upload = multer({ storage: storage });
 const publicFolder = "public";
+let approvedCache = [];
 
 if (!fs.existsSync(`./${publicFolder}`)) {
   fs.mkdirSync(`./${publicFolder}`);
@@ -53,17 +59,23 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   await createTables(db);
 
   approveSigsLoop(db, connection);
+  approvedCacheLoop(db, connection, approvedCache);
 
-  app.use(cors())
+  app.use(cors());
   app.use("/static", express.static(publicFolder));
   app.use(bodyParser.json());
   app.use(setLocals(db));
   app.use(errorHandler);
 
-  app.get("/listings/all", getAllListings);
   app.get("/hello", (req, res, next) => res.send("henlo"));
+
+  app.get("/listing/all", requireAdmin, getAllListings);
+  app.get("/listing/pending", requireAdmin, getPendingListings);
+  app.put("/listing/:id", requireAdmin, approveListing);
+
+  app.get("/listing/approved", getApprovedListings);
   app.post(
-    "/upload",
+    "/listing",
     upload.array("photos", 10),
     validateListing,
     uploadListing

@@ -7,6 +7,18 @@ export const createTables = async (db) => {
   );
 };
 
+export const approvedCacheLoop = async (db, connection, approvedCache) => {
+  try {
+    const result = await db.all("SELECT * FROM prompts WHERE approved = 1");
+
+    approvedCache = result;
+  } catch (error) {
+    console.log(error);
+  }
+  await new Promise((r) => setTimeout(r, 1000 * 60 * 10));
+  return approvedCacheLoop(db, connection, approvedCache);
+};
+
 export const approveSigsLoop = async (db, connection) => {
   try {
     const result = await db.all("SELECT * FROM prompts WHERE confirmed = 0");

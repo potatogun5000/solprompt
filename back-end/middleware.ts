@@ -36,8 +36,6 @@ export const validateListing = async (req, res, next) => {
       Buffer.from(req.body.ai_settings)
     );
 
-    console.log(res.locals);
-
     next();
   } catch (error) {
     console.log(error);
@@ -45,13 +43,37 @@ export const validateListing = async (req, res, next) => {
   }
 };
 
+export const requireAdmin = async (req, res, next) => {
+  if (req.query.pw === process.env.ADMIN_PW) return next();
+
+  next("wrong pw");
+};
+
+export const getPendingListings = async (req, res, next) => {
+  const result = await res.locals.db.all(
+    "SELECT * FROM prompts WHERE approved = 0 AND confirmed = 1"
+  );
+  res.send(result);
+};
+
+export const approveListing = async (req, res, next) => {
+  await res.locals.db.run(
+    "UPDATE prompts SET approved = 1 WHERE id = ?",
+    req.params.id
+  );
+  res.send("done");
+};
+
+export const getApprovedListings = async (req, res, next) => {
+  const result = await res.locals.db.all(
+    "SELECT * FROM prompts WHERE approved = 1"
+  );
+  res.send(result);
+};
+
 export const getAllListings = async (req, res, next) => {
-  try {
-    const result = await res.locals.db.all("SELECT * FROM prompts");
-    res.send(result);
-  } catch (error) {
-    next(error);
-  }
+  const result = await res.locals.db.all("SELECT * FROM prompts");
+  res.send(result);
 };
 
 export const uploadListing = async (req, res, next) => {
@@ -88,7 +110,7 @@ export const getListing = async (req, res, next) => {
       images: allImages.map((f) => f.filename),
     });
   } catch (error) {
-    res.send('does not exist');
+    res.send("does not exist");
   }
 };
 
@@ -96,5 +118,3 @@ export const errorHandler = async (err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("error");
 };
-
-

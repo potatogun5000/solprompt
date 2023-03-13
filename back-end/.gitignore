@@ -2,3 +2,4 @@ public
 db
 node_modules
 index.js
+.env
