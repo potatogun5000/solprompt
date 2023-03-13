@@ -44,7 +44,7 @@ const storage = multer.diskStorage({
 const connection = new Connection(process.env.SOL_RPC);
 const upload = multer({ storage: storage });
 const publicFolder = "public";
-let approvedCache = [];
+const memoryCache = {};
 
 if (!fs.existsSync(`./${publicFolder}`)) {
   fs.mkdirSync(`./${publicFolder}`);
@@ -60,12 +60,12 @@ if (!fs.existsSync(`./${publicFolder}`)) {
 
   confirmPromptsLoop(db, connection);
   approvePromptsLoop(db, connection);
-  approvedCacheLoop(db, connection, approvedCache);
+  approvedCacheLoop(db, connection, memoryCache);
 
   app.use(cors());
   app.use("/static", express.static(publicFolder));
   app.use(bodyParser.json());
-  app.use(setLocals(db, approvedCache));
+  app.use(setLocals(db, memoryCache));
   app.use(errorHandler);
 
   app.get("/hello", (req, res, next) => res.send("henlo"));

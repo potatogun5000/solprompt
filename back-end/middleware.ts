@@ -1,9 +1,9 @@
 import b58 from "b58";
 import * as yup from "yup";
 
-export const setLocals = (db, approvedCache) => async (req, res, next) => {
+export const setLocals = (db, memoryCache) => async (req, res, next) => {
   res.locals.db = db;
-  res.locals.approvedCache = approvedCache;
+  res.locals.memoryCache = memoryCache;
   next();
 };
 
@@ -76,7 +76,7 @@ export const approveListing = async (req, res, next) => {
 };
 
 export const getApprovedListings = async (req, res, next) => {
-  res.send(res.locals.approvedCache);
+  res.send(res.locals.memoryCache.approved);
 };
 
 export const getAllListings = async (req, res, next) => {
