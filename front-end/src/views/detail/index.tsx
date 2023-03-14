@@ -83,15 +83,16 @@ export const DetailView : FC = ({}) => {
         </Carousel>
           <div className="mb-5">
           {
-            listing &&
-              <div className="flex flex-row">
-                <div>
-                  <div>{(price/LAMPORTS_PER_SOL).toFixed(2)} SOL</div>
-                  <div>{listing && listing.description}</div>
+            listing && <>
                   <div>Mid Journey</div>
+                  <hr/>
+                  <div className="p-4 m-4">{listing && unescape(listing.description)}</div>
+                  <hr/>
+                <div className="flex flex-row justify-center pt-5">
+                  <div className="p-3">{(price/LAMPORTS_PER_SOL).toFixed(2)} SOL</div>
+                  <button className="btn">purchase</button>
                 </div>
-                <div><button className="btn">purchase</button></div>
-              </div>
+            </>
           }
         </div>
       </div>

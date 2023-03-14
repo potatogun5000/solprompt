@@ -39,7 +39,7 @@ export const validateListing = async (req, res, next) => {
       Buffer.from(req.body.ai_settings)
     );
     res.locals.cleaned.description = escape(req.body.description);
-    res.locals.cleaned.ai_type = escape(req.body.description);
+    res.locals.cleaned.ai_type = escape(req.body.ai_type);
 
     next();
   } catch (error) {
