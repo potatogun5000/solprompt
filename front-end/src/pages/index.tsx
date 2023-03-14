@@ -6,7 +6,7 @@ const Home: NextPage = (props) => {
   return (
     <div>
       <Head>
-        <title>Prompt3.ai</title>
+        <title>Sol Prompt - Marketplace</title>
         <meta
           name="description"
           content="prompt3.ai"

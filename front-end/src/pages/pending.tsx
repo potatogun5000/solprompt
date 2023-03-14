@@ -6,7 +6,7 @@ const Pending: NextPage = (props) => {
   return (
     <div>
       <Head>
-        <title>prompt3.ai</title>
+        <title>Sol Promp - Marketplace</title>
         <meta
           name="description"
           content="Basic Functionality"
