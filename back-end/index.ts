@@ -59,7 +59,7 @@ if (!fs.existsSync(`./${publicFolder}`)) {
 
   confirmPromptsLoop(db, connection);
   approvePromptsLoop(db, connection);
-  approvedCacheLoop(db, connection, memoryCache);
+  approvedCacheLoop(db, memoryCache);
 
   app.use(cors());
   app.use("/static", express.static(publicFolder));

@@ -9,7 +9,7 @@ export const createTables = async (db) => {
   );
 };
 
-export const approvedCacheLoop = async (db, connection, memoryCache) => {
+export const approvedCacheLoop = async (db, memoryCache) => {
   try {
     const result = await db.all(
       "SELECT * FROM prompts WHERE approved = 1 AND confirmed = 1"
@@ -26,15 +26,15 @@ export const approvedCacheLoop = async (db, connection, memoryCache) => {
       delete result[i].instructions;
       delete result[i].prompt;
       delete result[i].ai_settings;
-    }
 
+    }
 
     memoryCache.approved = result;
   } catch (error) {
     console.log(error);
   }
-  await new Promise((r) => setTimeout(r, 1000 * 60 * 10));
-  return approvedCacheLoop(db, connection, memoryCache);
+  await new Promise((r) => setTimeout(r, 1000 * 30));
+  return approvedCacheLoop(db, memoryCache);
 };
 
 export const approvePromptsLoop = async (db, connection) => {
