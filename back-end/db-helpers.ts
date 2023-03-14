@@ -52,7 +52,7 @@ export const approvePromptsLoop = async (db, connection) => {
         if (info.owner.toBase58() !== process.env.CONTRACT_ID) continue;
 
         const bytes = new Uint8Array(info.data);
-        const isApproved = bytes[103];
+        const isApproved = bytes[9];
 
         if (isApproved !== 1) continue;
 

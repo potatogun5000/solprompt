@@ -4,6 +4,7 @@ import Image from "next/image";
 import axios from "axios";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
+  LAMPORTS_PER_SOL,
   Keypair,
   SystemProgram,
   Transaction,
@@ -24,6 +25,7 @@ import {
 } from "../../web3/util";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
+
 
 export const DetailView : FC = ({}) => {
   const { connection } = useConnection();
@@ -64,7 +66,7 @@ export const DetailView : FC = ({}) => {
 
   return (
     <div className="md:hero mx-auto p-4">
-      <div className="w-full hero-content flex flex-col">
+      <div className="w-full hero-content flex flex-col max-w-lg">
         <div className="mt-6">
           <h1 className="text-center text-5xl md:pl-12 font-bold text-white bg-clip-text mb-4">
             { listing && unescape(listing.title)}
@@ -82,13 +84,14 @@ export const DetailView : FC = ({}) => {
           <div className="mb-5">
           {
             listing &&
-              <>
-                <div>{price} SOL</div>
-                <div>description</div>
-                <div>pics</div>
-                <div>ai: Mid Journey</div>
-                <div><button className="btn">buy</button></div>
-              </>
+              <div className="flex flex-row">
+                <div>
+                  <div>{(price/LAMPORTS_PER_SOL).toFixed(2)} SOL</div>
+                  <div>{listing && listing.description}</div>
+                  <div>Mid Journey</div>
+                </div>
+                <div><button className="btn">purchase</button></div>
+              </div>
           }
         </div>
       </div>
