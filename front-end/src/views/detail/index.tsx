@@ -68,7 +68,7 @@ export const DetailView : FC = ({}) => {
     <div className="md:hero mx-auto p-4">
       <div className="w-full hero-content flex flex-col max-w-lg">
         <div className="mt-6">
-          <h1 className="text-center text-5xl md:pl-12 font-bold text-white bg-clip-text mb-4">
+          <h1 className="text-center text-4xl font-bold text-white bg-clip-text mb-4">
             { listing && unescape(listing.title)}
           </h1>
         </div>
@@ -84,7 +84,7 @@ export const DetailView : FC = ({}) => {
           <div className="mb-5">
           {
             listing && <>
-                  <div>Mid Journey</div>
+                  <div>{listing && listing.ai_type}</div>
                   <hr/>
                   <div className="p-4 m-4">{listing && unescape(listing.description)}</div>
                   <hr/>

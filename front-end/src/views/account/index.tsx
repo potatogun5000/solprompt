@@ -5,6 +5,7 @@ import Link from "next/link";
 import axios from "axios";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
+  LAMPORTS_PER_SOL,
   Keypair,
   SystemProgram,
   Transaction,
@@ -21,7 +22,104 @@ import {
   sendTx,
   createListingItx,
   getListingAccounts,
+  getListingAccount,
+  getListingPda,
 } from "../../web3/util";
+
+const ItemView = (props): JSX.Element => {
+  const { item, program, provider, publicKey } = props as any;
+  const [loaded, setLoaded] = useState(false);
+  const [data, setData] = useState(null);
+  const [image, setImage] = useState(null);
+  const [listingPda, setListingPda] = useState(null);
+
+  const loadIt = async () => {
+    try {
+      const data = await getListingAccount(program, provider, publicKey, item);
+      setData(data);
+      console.log(data);
+    } catch (error) {
+      //console.log(error);
+    }
+  };
+
+  const getImages = async () => {
+    try {
+      const listingPda = await getListingPda(
+        program,
+        provider,
+        publicKey,
+        item
+      );
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_SERVER}/listing/${listingPda}`
+      );
+      const json = await response.json();
+
+      if (json?.images.length) setImage(json.images[0]);
+      setListingPda(listingPda);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (!loaded) {
+      setLoaded(true);
+      loadIt();
+      getImages();
+    }
+  }, []);
+
+  return (
+    <tr key={`iiitji-${item}`}>
+      {!loaded && (
+        <>
+          <th>{item}</th>
+          <th colSpan={5} className="text-center">
+            loading...
+          </th>
+        </>
+      )}
+      {data && (
+        <>
+          <th>{item}</th>
+          <th>{data.engine}</th>
+          <th>{(Number(data.price) / LAMPORTS_PER_SOL).toFixed(2)}</th>
+          <th>{Number(data.sales)}</th>
+          <th>{Number(data.approved) ? "approved" : "pending"}</th>
+          <th>
+            {image && (
+              <Image
+                alt="idc"
+                src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${image}`}
+                height={50}
+                width={50}
+              />
+            )}
+          </th>
+          <th>
+            {listingPda && (
+              <Link
+                style={{textDecoration:'underline'}}
+                target="_blank"
+                href={`/detail?id=${listingPda}`}
+              >
+                open
+              </Link>
+            )}
+          </th>
+        </>
+      )}
+      {loaded && !data && (
+        <>
+          <th>{item}</th>
+          <th colSpan={5} className="text-center">
+            error loading listing
+          </th>
+        </>
+      )}
+    </tr>
+  );
+};
 
 export const AccountView: FC = ({}) => {
   const { connection } = useConnection();
@@ -36,54 +134,13 @@ export const AccountView: FC = ({}) => {
   const [imageMap, setImageMap] = useState({});
   const [loaded, setLoaded] = useState(false);
 
-  const getImage = pda => {
-    if(imageMap[pda.toBase58()])
-      return imageMap[pda.toBase58()];
-
-    return 'cant load';
-  }
-
-  const getImages = async (listings) => {
-    console.log('get images')
-
-
-    for(let i = 0; i < listings.length; i++){
-      try{
-        console.log(listings[i])
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_SERVER}/listing/${listings[i].pda.toBase58()}`
-        );
-        const json = await response.json();
-
-        console.log(json.images.length)
-        if(json?.images.length){
-          const _imageMap = imageMap;
-          _imageMap[listings[i].pda.toBase58()] = json.images[0]
-
-          setImageMap(JSON.parse(JSON.stringify(_imageMap)));
-        }
-      }catch(error){
-        //console.log(error);
-      }
-    }
-  }
-
-  useEffect( () => {
-    getImages(listings);
-    }, [listings])
-
-  const getAccounts = async (program, provider, publicKey) => {
-    const lists = await getListingAccounts(program, provider, publicKey);
-
-    setListings(lists.reverse());
-  };
-
   const getUser = async (program, provider, publicKey) => {
     try {
       const user = await getSellerAccount(program, provider, publicKey);
-      setSales(Number(user.sellerAccount.sales));
-      setBalance(Number(user.sellerAccount.balance));
-      console.log(user);
+
+      setSales(Number(user.sales));
+      setBalance(Number(user.balance));
+      setListings([...Array(Number(user.listings)).keys()].reverse());
     } catch (error) {
       console.log(error);
     }
@@ -91,9 +148,7 @@ export const AccountView: FC = ({}) => {
 
   useEffect(() => {
     if (publicKey && provider && program && !loaded) {
-      getAccounts(program, provider, publicKey);
       getUser(program, provider, publicKey);
-
       setLoaded(true);
     }
   }, [publicKey, provider, program, loaded]);
@@ -110,9 +165,13 @@ export const AccountView: FC = ({}) => {
           {publicKey && (
             <div className="flex flex-row">
               <div className="flex flex-row mr-10">
-                <div>Balance: <br/>Sales:</div>
+                <div>
+                  Balance: <br />
+                  Sales:
+                </div>
                 <div className="ml-5">
-                  {balance === -1 ? "loading" : balance} SOL<br/>
+                  {balance === -1 ? "loading" : balance} SOL
+                  <br />
                   {sales === -1 ? "loading" : sales} sold
                 </div>
               </div>
@@ -129,15 +188,23 @@ export const AccountView: FC = ({}) => {
             ) : (
               <table style={{ width: 600, textAlign: "left" }}>
                 <tr className="table_header">
-                  <td></td>
                   <td>id</td>
                   <td>type</td>
                   <td>price</td>
                   <td>sales</td>
                   <td>approved</td>
-                  <td></td>
+                  <td>thumbnail</td>
+                  <td>view</td>
                 </tr>
-                {listings.map((item) => (
+                {listings.map((item, index) => (
+                  <ItemView
+                    item={item}
+                    publicKey={publicKey}
+                    program={program}
+                    provider={provider}
+                  />
+                ))}
+                {/*listings.map((item) => (
                   <>
                     <tr className="table_content">
                       <th>{
@@ -161,7 +228,7 @@ export const AccountView: FC = ({}) => {
                       </th>
                     </tr>
                   </>
-                ))}
+                ))*/}
               </table>
             ))}
           {!publicKey && <div>Connect wallet to view</div>}

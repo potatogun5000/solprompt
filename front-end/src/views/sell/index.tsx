@@ -194,7 +194,7 @@ export const SellView: FC = ({}) => {
     if (value.match(/\./g)) {
       const [, decimal] = value.split('.');
 
-      if (decimal?.length > 2) {
+      if (decimal?.length > 1) {
         return;
       }
     }

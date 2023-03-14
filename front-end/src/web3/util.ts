@@ -97,6 +97,19 @@ export const getListing = async (program, provider, pda) => {
   return listing;
 };
 
+export const getListingPda = async (program, provider, publicKey, id) => {
+  const sellerPda = await getPda(program, "seller", [publicKey]);
+  const listingPda = await getDynamicPda(program, "listing", publicKey, id);
+  return listingPda.toBase58();
+};
+
+export const getListingAccount = async (program, provider, publicKey, id) => {
+  const sellerPda = await getPda(program, "seller", [publicKey]);
+  const listingPda = await getDynamicPda(program, "listing", publicKey, id);
+  const listData = await program.account.listing.fetch(listingPda);
+  return listData;
+};
+
 export const getListingAccounts = async (program, provider, publicKey) => {
   try {
     const sellerPda = await getPda(program, "seller", [publicKey]);
@@ -129,10 +142,9 @@ export const createListingItx = async (
 ) => {
   try {
     let listingsAmount = 0;
-    if(sellerAccount){
-      listingsAmount = Number(sellerAccount.listings)
+    if (sellerAccount) {
+      listingsAmount = Number(sellerAccount.listings);
     }
-
 
     const sellerPda = await getPda(program, "seller", [publicKey]);
     const statePda = await getPda(program, "state", []);
@@ -151,10 +163,10 @@ export const createListingItx = async (
       systemProgram: PROGRAM_ID,
     };
 
-    const listingItx= await program.instruction.createListing(
+    const listingItx = await program.instruction.createListing(
       aiType,
       publicKey,
-      new anchor.BN(price*LAMPORTS_PER_SOL),
+      new anchor.BN(price * LAMPORTS_PER_SOL),
       {
         accounts,
       }
