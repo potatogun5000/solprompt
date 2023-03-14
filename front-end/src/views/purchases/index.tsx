@@ -15,24 +15,36 @@ import {
 } from "@solana/web3.js";
 import { notify } from "../../utils/notifications";
 import {
-  getListingFromReceipt,
   useProvider,
   useProgram,
   getBuyerAccount,
 } from "../../web3/util";
+import {decode} from "b58";
 
-const ReceiptView = (props): JSX.Element => {
-  const { item, publicKey, index } = props as any;
-
-  const [loading, setLoading] = useState(true);
+const ListingView = (props): JSX.Element => {
+  const { item, publicKey, index, select, setSelected} = props as any;
 
   return (
-    <div style={{ width: "100%", border: "1px solid white", padding: 10 }}>
-      {loading && "loading"}
-      {!loading && "dog"}
+    <div className="flex flex-col" style={{ width: "100%", border: "1px solid white", padding: 10 }}>
+      <h1 className="text-sm p-2 text-center mb-3">{unescape(props.title)}</h1>
+      <div className="flex flex-row">
+    {
+      select === index
+        ?
+        <button className="opacity-50 cursor-not-allowed bg-transparent hover:bg-blue-500 text-grey-700 font-semibold hover:text-white py-2 px-4 border border-grey-500 hover:border-transparent rounded">
+        select
+      </button>
+      :
+      <button onClick={() => setSelected(index)} className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+        select
+      </button>
+    }
+      <Link className="ml-3 pt-3 underline text-blue-300 flex-1 text-right" href={`/detail?id=${props.listing_pda}`} target="_blank" style={{float:'right'}}>view</Link>
+      </div>
     </div>
   );
 };
+
 export const PurchasesView: FC = ({}) => {
   const { connection } = useConnection();
   const wallet = useWallet();
@@ -42,15 +54,25 @@ export const PurchasesView: FC = ({}) => {
   const { provider } = useProvider();
 
   const [listings, setListings] = useState([]);
+  const [select, setSelected] = useState(0);
+  const [aiSettings, setAiSettings] = useState({});
 
   const getOwnedListings = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}`
     );
     const json = await response.json();
-
+    console.log(json);
     setListings(json);
   };
+
+  useEffect(() => {
+    if(listings.length){
+      const _aiSettings = JSON.parse(decode(listings[select].ai_settings).toString());
+      delete _aiSettings.aiType;
+      setAiSettings(_aiSettings);
+    }
+  },[listings, select])
 
   useEffect(() => {
     if (publicKey) {
@@ -67,63 +89,52 @@ export const PurchasesView: FC = ({}) => {
           </h1>
         </div>
 
-        <div className="flex flex-row">
-          <div className="flex-1">
+    {
+      listings.length ?
+        <div className="flex flex-row" style={{width:'100%', padding:50}}>
+          <div className="flex-1" style={{width:'50%'}}>
             <h1 className="text-lg font-bold text-center">Purchases</h1>
             <div style={{ padding: 25 }}>
               {listings.map((item, index) => (
-                <ListingView item={item} index={index} />
+                <ListingView {...item} index={index} select={select} setSelected={setSelected}/>
               ))}
             </div>
           </div>
-          <div className="flex-1" style={{ padding: 25 }}>
+          <div className="flex-1" style={{width:'50%', padding:0}}>
             <h1 className="text-lg font-bold text-center">
-              The dog catches the cat
+              { unescape(listings[select].title)}
             </h1>
-            <h1 className="text-sm font-bold text-center">Mid Journey</h1>
+            <h1 className="text-xs font-bold text-center uppercase">
+              { listings[select].ai_type.replace('_', ' ')}
+            </h1>
             <h1 className="text-md font-bold">Prompt</h1>
-            <p className="text-sm font-weight-normal p-3">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.
+            <p className="text-sm font-weight-normal p-3 m-3 text-black bg-white">
+              { unescape(listings[select].prompt)}
             </p>
 
             <h1 className="text-md font-bold">Instructions</h1>
-            <p className="text-sm p-3 ">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.
+            <p className="text-sm font-weight-normal p-3 m-3 text-black bg-white">
+              { unescape(listings[select].instructions)}
             </p>
-
-            <h1 className="text-md font-bold">Negative Prompt</h1>
-            <p className="text-sm p-3">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.
-            </p>
+            {
+              Object.keys(aiSettings).map( a => (
+                <>
+                  <h1 className="text-md font-bold">{a}</h1>
+                  <p className="text-sm font-weight-normal p-3 m-3 text-black bg-white">
+                  { aiSettings[a] }
+                  </p>
+                </>
+              ))
+            }
           </div>
         </div>
+        :
+        <div>
+          {
+            publicKey ? 'loading' : 'Connect your wallet'
+          }
+        </div>
+      }
       </div>
     </div>
   );
