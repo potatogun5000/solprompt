@@ -1,9 +1,9 @@
 import * as anchor from "@project-serum/anchor";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, SignaturesForAddressOptions } from "@solana/web3.js";
 import idl from "./prompt3.json";
 
-const { Wallet, web3 } = anchor;
+const { Wallet, web3, BN } = anchor;
+const { PublicKey, Transaction } = web3;
 const CONTRACT_ID = "CKi9rre9A3oL99JB7BbU3rpBJXNRDWF2Qm2iMpYYTxAn";
 const SYSVAR_RENT_PUBKEY = web3.SYSVAR_RENT_PUBKEY;
 const PROGRAM_ID = web3.SystemProgram.programId;
@@ -85,6 +85,66 @@ export const createSellerAccountItx = async (program, provider, publicKey) => {
     console.log("wtf", itx);
 
     return itx;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const buyListingItx = async (program, provider, listing, signer) => {
+  try {
+    const buyer = await getPda(program, "buyer", [signer]);
+    const state = await getPda(program, "state", []);
+    const listingData = await program.account.listing.fetch(listing);
+    const sellerAccount = listingData.seller;
+    const seller = await getPda(program, "seller", [sellerAccount]);
+
+    let buyerData;
+    let receiptId = 0;
+    let tx = new Transaction();
+    try {
+      buyerData = await program.account.buyer.fetch(buyer);
+      receiptId = buyerData.purchases;
+    } catch (error) {}
+
+    if (!buyerData) {
+      const accounts1 = {
+        signer,
+        buyer,
+        state,
+        systemProgram: PROGRAM_ID,
+      };
+
+      const itx1 = await program.instruction.initBuyer({
+        accounts: accounts1,
+      });
+
+      tx.add(itx1);
+    }
+
+    const receipt = await getDynamicPda(program, "receipt", signer, receiptId);
+
+    const accounts2 = {
+      signer,
+      sellerAccount,
+      seller,
+      listing,
+      buyer,
+      receipt,
+      state,
+      systemProgram: PROGRAM_ID,
+    };
+
+    const itx2 = await program.instruction.purchaseListing(
+      new BN(Number(listingData.id) - 1),
+      {
+        accounts: accounts2,
+      }
+    );
+
+    tx.add(itx2);
+
+    return tx;
   } catch (error) {
     console.log(error);
     return null;

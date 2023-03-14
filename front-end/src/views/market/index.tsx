@@ -6,7 +6,7 @@ import Text from "../../components/Text";
 import b58 from "b58";
 
 const Listing = (props): JSX.Element => {
-  const { images, title, listingPda, aiSettings} = props as any;
+  const { images, title, listingPda, aiSettings, price} = props as any;
 
   return (
     <Link
@@ -33,7 +33,7 @@ const Listing = (props): JSX.Element => {
       </div>
       <div className="pl-2 pr-2">
         <div style={{fontSize:12,  float:'left', marginTop: 5, fontWeight: 'normal', textTransform: 'uppercase'}}>Mid Journey</div>
-        <div style={{fontSize:12, fontWeight: 'bold', float:'right', marginTop: 5}}>◎ 2.3</div>
+        <div style={{fontSize:12, fontWeight: 'bold', float:'right', marginTop: 5}}>◎ ${price}</div>
       </div>
     </div>
     </Link>
@@ -65,7 +65,7 @@ export const MarketView: FC = ({}) => {
         <div className="w-full text-left font-bold">
           <div className="flex flex-row justify-center pt-5" style={{width:700, flexWrap: 'wrap'}}>
             {data.map((item, index) => (
-              <Listing className="flex" images={item.images} title={item.title} listingPda={item.listing_pda} aiSettings={item.ai_settings}/>
+              <Listing className="flex" images={item.images} title={item.title} listingPda={item.listing_pda} aiSettings={item.ai_settings} price={item.price}/>
             ))}
           </div>
         </div>

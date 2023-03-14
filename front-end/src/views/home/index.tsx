@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import Link from "next/link";
 import Image from "next/image";
 import pkg from "../../../package.json";
@@ -6,7 +7,7 @@ import Text from "../../components/Text";
 import b58 from "b58";
 
 const Listing = (props): JSX.Element => {
-  const { images, title, listingPda, aiSettings} = props as any;
+  const { images, title, listingPda, aiSettings, price} = props as any;
 
   return (
     <Link
@@ -32,7 +33,7 @@ const Listing = (props): JSX.Element => {
       </div>
       <div className="pl-2 pr-2">
         <div style={{fontSize:12,  float:'left', marginTop: 5, fontWeight: 'normal', textTransform: 'uppercase'}}>Mid Journey</div>
-        <div style={{fontSize:12, fontWeight: 'bold', float:'right', marginTop: 5}}>◎ 2.3</div>
+        <div style={{fontSize:12, fontWeight: 'bold', float:'right', marginTop: 5}}>◎ {price}</div>
       </div>
     </div>
     </Link>
@@ -99,7 +100,7 @@ export const HomeView: FC = ({}) => {
           <hr />
           <div className="flex flex-row justify-center pt-5">
             {data.slice(0, 5).map((item, index) => (
-              <Listing images={item.images} title={item.title} listingPda={item.listing_pda} aiSettings={item.ai_settings}/>
+              <Listing images={item.images} title={item.title} listingPda={item.listing_pda} aiSettings={item.ai_settings} price={item.price}/>
             ))}
           </div>
         </div>
@@ -108,7 +109,7 @@ export const HomeView: FC = ({}) => {
           <hr />
           <div className="flex flex-row justify-center pt-5">
             {data.slice(5, 10).map((item, index) => (
-              <Listing images={item.images as any} title={item.title} aiSettings={item.ai_settings} listingPda={item.listing_pda}/>
+              <Listing images={item.images as any} title={item.title} aiSettings={item.ai_settings} listingPda={item.listing_pda} price={item.price}/>
             ))}
           </div>
         </div>
