@@ -30,7 +30,7 @@ const Listing = (props): JSX.Element => {
           style={{borderRadius:5}}
         />
       </div>
-      <div class="pl-2 pr-2">
+      <div className="pl-2 pr-2">
         <div style={{fontSize:12,  float:'left', marginTop: 5, fontWeight: 'normal', textTransform: 'uppercase'}}>Mid Journey</div>
         <div style={{fontSize:12, fontWeight: 'bold', float:'right', marginTop: 5}}>◎ 2.3</div>
       </div>
