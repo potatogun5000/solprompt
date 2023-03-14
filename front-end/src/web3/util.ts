@@ -56,6 +56,17 @@ export const getDynamicPda = async (program, seed, pub, uint) => {
 export const sleep = async (n) =>
   await new Promise((resolve) => setTimeout(resolve, n));
 
+export const getBuyerAccount = async (program, provider, publicKey) => {
+  const buyerPda = await getPda(program, "buyer", [publicKey]);
+
+  try {
+    const buyerAccount = await program.account.buyer.fetch(buyerPda);
+    return buyerAccount;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const getSellerAccount = async (program, provider, publicKey) => {
   const sellerPda = await getPda(program, "seller", [publicKey]);
 
@@ -183,7 +194,7 @@ export const getListingAccount = async (program, provider, publicKey, id) => {
   const listingPda = await getDynamicPda(program, "listing", publicKey, id);
   const listData = await program.account.listing.fetch(listingPda);
   return listData;
-}
+};
 
 export const getListingAccounts = async (program, provider, publicKey) => {
   try {

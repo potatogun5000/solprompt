@@ -1,4 +1,31 @@
 import { PublicKey } from "@solana/web3.js";
+import * as anchor from "@project-serum/anchor";
+
+export const getPda = async (programId, seed, inputs) => {
+  const [pda, bump] = await anchor.web3.PublicKey.findProgramAddress(
+    [
+      anchor.utils.bytes.utf8.encode(seed),
+      ...inputs.map((input) => input.toBytes()),
+    ],
+    new PublicKey(programId)
+  );
+
+  return pda;
+};
+
+export const getDynamicPda = async (programId, seed, pub, uint) => {
+  const [pda, bump] = await anchor.web3.PublicKey.findProgramAddress(
+    [
+      anchor.utils.bytes.utf8.encode(seed),
+      pub.toBytes(),
+      new anchor.BN(uint).toArrayLike(Buffer, "le", 8),
+    ],
+    new PublicKey(programId)
+  );
+
+  return pda;
+};
+
 
 export const createTables = async (db) => {
   await db.exec(

@@ -1,11 +1,16 @@
 import b58 from "b58";
 import * as yup from "yup";
+import { PublicKey } from "@solana/web3.js";
+import { getPda, getDynamicPda } from "./db-helpers";
+import * as anchor from "@project-serum/anchor";
 
-export const setLocals = (db, memoryCache) => async (req, res, next) => {
-  res.locals.db = db;
-  res.locals.memoryCache = memoryCache;
-  next();
-};
+export const setLocals =
+  (db, memoryCache, connection) => async (req, res, next) => {
+    res.locals.db = db;
+    res.locals.memoryCache = memoryCache;
+    res.locals.connection = connection;
+    next();
+  };
 
 export const validateListing = async (req, res, next) => {
   //TODO: do better
@@ -21,7 +26,7 @@ export const validateListing = async (req, res, next) => {
       owner: yup.string().required(),
       description: yup.string().required(),
       ai_type: yup.string().required(),
-      price: yup.string().required()
+      price: yup.string().required(),
     });
 
     const valid = await schema.isValid(req.body);
@@ -80,6 +85,49 @@ export const getApprovedListings = async (req, res, next) => {
 export const getAllListings = async (req, res, next) => {
   const result = await res.locals.db.all("SELECT * FROM prompts");
   res.send(result);
+};
+
+export const getOwnedListings = async (req, res, next) => {
+  try {
+    const buyer = new PublicKey(req.params.address);
+
+    const buyerPda = await getPda(process.env.CONTRACT_ID, "buyer", [buyer]);
+    const buyerAcc = await res.locals.connection.getAccountInfo(buyerPda);
+
+    const acc = new Uint8Array(buyerAcc.data);
+    const u64 = acc.slice(8 + 32, 8 + 32 + 8);
+    const buffer = Buffer.from(u64);
+    const buyerPurchases = Number(buffer.readBigUInt64LE(0));
+
+    const receiptPromise = [];
+    for (let i = 0; i < buyerPurchases; i++) {
+      const receiptPda = await getDynamicPda(
+        process.env.CONTRACT_ID,
+        "receipt",
+        buyer,
+        i
+      );
+      receiptPromise.push(res.locals.connection.getAccountInfo(receiptPda));
+    }
+
+    const receiptDatas = await Promise.all(receiptPromise);
+
+    const pdas = receiptDatas.map(({ data }) => {
+      const receiptData = new Uint8Array(data);
+      const pubkey = receiptData.slice(8, 32 + 8);
+      return b58.encode(pubkey);
+    });
+
+    const queryStr = pdas.map((p) => `"${p}"`).join(" OR listing_pda = ");
+
+    const allOwnedListings = await res.locals.db.all(
+      `SELECT * FROM prompts WHERE listing_pda = ${queryStr}`
+    );
+
+    res.send(allOwnedListings);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const uploadListing = async (req, res, next) => {

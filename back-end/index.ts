@@ -13,6 +13,7 @@ import {
   validateListing,
   uploadListing,
   getListing,
+  getOwnedListings,
   getAllListings,
   getPendingListings,
   requireAdmin,
@@ -64,8 +65,7 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   app.use(cors());
   app.use("/static", express.static(publicFolder));
   app.use(bodyParser.json());
-  app.use(setLocals(db, memoryCache));
-  app.use(errorHandler);
+  app.use(setLocals(db, memoryCache, connection));
 
   app.get("/hello", (req, res, next) => res.send("henlo"));
 
@@ -79,6 +79,10 @@ if (!fs.existsSync(`./${publicFolder}`)) {
     uploadListing
   );
   app.get("/listing/:id", getListing);
+
+  app.get("/buyer/:address", getOwnedListings);
+
+  app.use(errorHandler);
 
   const server = app.listen(8080, () => {
     console.log("Server listening on port 8080");

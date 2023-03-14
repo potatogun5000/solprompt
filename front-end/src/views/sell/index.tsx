@@ -26,7 +26,7 @@ const WalletMultiButtonDynamic = dynamic(
     (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
   { ssr: false }
 );
- 
+
 export const SellView: FC = ({}) => {
   const { connection } = useConnection();
   const wallet = useWallet();
@@ -44,39 +44,42 @@ export const SellView: FC = ({}) => {
     setAiType(e.target.value);
   };
 
-  const createListingAccount = useCallback(async (_aiType, _price) => {
-    if (!publicKey) {
-      notify({ type: "error", message: `Wallet not connected!` });
-      console.log("error", `Send Transaction: Wallet not connected!`);
-      return;
-    }
-    let sellerAccount = await getSellerAccount(program, provider, publicKey);
+  const createListingAccount = useCallback(
+    async (_aiType, _price) => {
+      if (!publicKey) {
+        notify({ type: "error", message: `Wallet not connected!` });
+        console.log("error", `Send Transaction: Wallet not connected!`);
+        return;
+      }
+      let sellerAccount = await getSellerAccount(program, provider, publicKey);
 
-    const tx = new Transaction();
-    if (!sellerAccount) {
-      const createSellerItx = await createSellerAccountItx(
+      const tx = new Transaction();
+      if (!sellerAccount) {
+        const createSellerItx = await createSellerAccountItx(
+          program,
+          provider,
+          publicKey
+        );
+
+        tx.add(createSellerItx);
+      }
+
+      const { listingItx, listingPda } = await createListingItx(
         program,
         provider,
-        publicKey
+        sellerAccount,
+        publicKey,
+        _aiType,
+        _price
       );
+      tx.add(listingItx);
 
-      tx.add(createSellerItx);
-    }
+      const sig = await sendTx(program, provider, wallet, tx);
 
-    const { listingItx, listingPda } = await createListingItx(
-      program,
-      provider,
-      sellerAccount,
-      publicKey,
-      _aiType,
-      _price
-    );
-    tx.add(listingItx);
-
-    const sig = await sendTx(program, provider, wallet, tx);
-
-    return { sig, listingPda, owner: publicKey };
-  }, [publicKey, program, provider, wallet]);
+      return { sig, listingPda, owner: publicKey };
+    },
+    [publicKey, program, provider, wallet]
+  );
 
   const handleSubmit = async (event) => {
     if (loading) return;
@@ -160,7 +163,10 @@ export const SellView: FC = ({}) => {
     }
 
     try {
-      const { sig, listingPda, owner } = await createListingAccount(aiType, price);
+      const { sig, listingPda, owner } = await createListingAccount(
+        aiType,
+        price
+      );
 
       (document.getElementById("listing_pda") as HTMLInputElement).value = (
         listingPda as any
@@ -192,7 +198,7 @@ export const SellView: FC = ({}) => {
     const { value } = evt.target;
 
     if (value.match(/\./g)) {
-      const [, decimal] = value.split('.');
+      const [, decimal] = value.split(".");
 
       if (decimal?.length > 1) {
         return;
@@ -200,7 +206,7 @@ export const SellView: FC = ({}) => {
     }
 
     setPrice(value);
-  }
+  };
 
   return (
     <div className="md:hero mx-auto p-4">
@@ -252,11 +258,11 @@ export const SellView: FC = ({}) => {
                 <input
                   type="number"
                   name="price"
-                  step={.01}
+                  step={0.01}
                   required
                   id="price"
                   value={price}
-                  onChange={handleChange} 
+                  onChange={handleChange}
                   className="block w-full rounded-md border-0 py-1.5 pl-8 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-gray-50 "
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center">
