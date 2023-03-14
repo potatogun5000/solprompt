@@ -4,7 +4,7 @@ import { PublicKey, SignaturesForAddressOptions } from "@solana/web3.js";
 import idl from "./prompt3.json";
 
 const { Wallet, web3 } = anchor;
-const CONTRACT_ID = "CKi9rre9A3oL99JB7BbU3rpBJXNRDWF2Qm2iMpYYTxAn";
+const CONTRACT_ID = "F6X97TzFoSyRAsMCVEjRncxAqNNmDqGoaq5ESFKvCzWZ";
 const SYSVAR_RENT_PUBKEY = web3.SYSVAR_RENT_PUBKEY;
 const PROGRAM_ID = web3.SystemProgram.programId;
 
