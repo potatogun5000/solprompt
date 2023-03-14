@@ -38,12 +38,13 @@ export const SellView: FC = ({}) => {
   const [submitClicked, setSubmitClicked] = useState(false);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [price, setPrice] = useState(0);
 
   const handleAiChange = (e) => {
     setAiType(e.target.value);
   };
 
-  const createListingAccount = useCallback(async () => {
+  const createListingAccount = useCallback(async (_aiType, _price) => {
     if (!publicKey) {
       notify({ type: "error", message: `Wallet not connected!` });
       console.log("error", `Send Transaction: Wallet not connected!`);
@@ -66,7 +67,9 @@ export const SellView: FC = ({}) => {
       program,
       provider,
       sellerAccount,
-      publicKey
+      publicKey,
+      _aiType,
+      _price
     );
     tx.add(listingItx);
 
@@ -157,7 +160,7 @@ export const SellView: FC = ({}) => {
     }
 
     try {
-      const { sig, listingPda, owner } = await createListingAccount();
+      const { sig, listingPda, owner } = await createListingAccount(aiType, price);
 
       (document.getElementById("listing_pda") as HTMLInputElement).value = (
         listingPda as any
@@ -185,6 +188,20 @@ export const SellView: FC = ({}) => {
     }
   };
 
+  const handleChange = (evt) => {
+    const { value } = evt.target;
+
+    if (value.match(/\./g)) {
+      const [, decimal] = value.split('.');
+
+      if (decimal?.length > 2) {
+        return;
+      }
+    }
+
+    setPrice(value);
+  }
+
   return (
     <div className="md:hero mx-auto p-4">
       <div className="pl-20 pr-20 w-full hero-content flex flex-col">
@@ -197,7 +214,7 @@ export const SellView: FC = ({}) => {
         <div className="pt-10 max-w-xlg w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <form
             id="myform"
-            action={`${process.env.NEXT_PUBLIC_API_SERVER}/upload`}
+            action={`${process.env.NEXT_PUBLIC_API_SERVER}/listing`}
             method="post"
             name="myform"
             encType="multipart/form-data"
@@ -235,8 +252,11 @@ export const SellView: FC = ({}) => {
                 <input
                   type="number"
                   name="price"
+                  step={.01}
                   required
-                  id="price_1"
+                  id="price"
+                  value={price}
+                  onChange={handleChange} 
                   className="block w-full rounded-md border-0 py-1.5 pl-8 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-gray-50 "
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center">

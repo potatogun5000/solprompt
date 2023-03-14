@@ -102,7 +102,7 @@ export const uploadListing = async (req, res, next) => {
 export const getListing = async (req, res, next) => {
   try {
     const listingInfo = await res.locals.db.get(
-      "SELECT * FROM prompts WHERE listing_pda = ?",
+      "SELECT * FROM prompts WHERE listing_pda = ? AND approved = 1",
       req.params.id
     );
     const allImages = await res.locals.db.all(

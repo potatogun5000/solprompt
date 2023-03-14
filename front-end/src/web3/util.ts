@@ -7,6 +7,7 @@ const { Wallet, web3 } = anchor;
 const CONTRACT_ID = "CKi9rre9A3oL99JB7BbU3rpBJXNRDWF2Qm2iMpYYTxAn";
 const SYSVAR_RENT_PUBKEY = web3.SYSVAR_RENT_PUBKEY;
 const PROGRAM_ID = web3.SystemProgram.programId;
+const LAMPORTS_PER_SOL = web3.LAMPORTS_PER_SOL;
 
 export const useProgram = () => {
   const { provider } = useProvider();
@@ -122,7 +123,9 @@ export const createListingItx = async (
   program,
   provider,
   sellerAccount,
-  publicKey
+  publicKey,
+  aiType,
+  price
 ) => {
   try {
     let listingsAmount = 0;
@@ -149,9 +152,9 @@ export const createListingItx = async (
     };
 
     const listingItx= await program.instruction.createListing(
-      "dog",
+      aiType,
       publicKey,
-      new anchor.BN(10000),
+      new anchor.BN(price*LAMPORTS_PER_SOL),
       {
         accounts,
       }
