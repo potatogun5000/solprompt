@@ -126,7 +126,7 @@ export const getOwnedListings = async (req, res, next) => {
 
     res.send(allOwnedListings);
   } catch (error) {
-    next(error);
+    res.send([]);
   }
 };
 
