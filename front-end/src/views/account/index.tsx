@@ -59,7 +59,8 @@ const ItemView = (props): JSX.Element => {
 
       if (json?.images.length) setImage(json.images[0]);
       setListingPda(listingPda);
-    } catch (error) {}
+    } catch (error) {
+    }
   };
 
   useEffect(() => {
@@ -134,6 +135,7 @@ export const AccountView: FC = ({}) => {
   const [listings, setListings] = useState([]);
   const [imageMap, setImageMap] = useState({});
   const [loaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getUser = async (program, provider, publicKey) => {
     try {
@@ -148,17 +150,18 @@ export const AccountView: FC = ({}) => {
   };
 
   const handleWithdraw = async () => {
+    setLoading(true);
     try {
       const tx = await withdrawSellerItx(program, provider, publicKey);
       const sig = await sendTx(program, provider, wallet, tx);
       await provider.connection.confirmTransaction(sig);
 
       setBalance(0);
-      alert('transfer success');
-      console.log(sig);
+      notify({ type: 'success', message: 'Withdraw successful!', txid: sig});
     } catch (error) {
-      console.log(error);
+      notify({ type: 'error', message: `Error`, description: error?.message});
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -193,8 +196,8 @@ export const AccountView: FC = ({}) => {
                   {sales === -1 ? "loading" : sales} sold
                 </div>
               </div>
-              <button onClick={handleWithdraw} className="ml-10 btn">
-                withdraw
+              <button disabled={loading} onClick={handleWithdraw} className="ml-10 btn">
+                {loading ? 'loading' : 'withdraw'}
               </button>
             </div>
           )}

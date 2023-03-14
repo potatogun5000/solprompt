@@ -39,6 +39,7 @@ export const DetailView: FC = ({}) => {
   const [loaded, setLoaded] = useState(false);
   const [images, setImages] = useState([]);
   const [price, setPrice] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const getApi = async (pda) => {
     const response = await fetch(
@@ -58,7 +59,12 @@ export const DetailView: FC = ({}) => {
   };
 
   const handleBuyListing = async () => {
+    setLoading(true);
     try{
+      if(!publicKey){
+        return notify({ type: 'error', message: 'Select wallet first'});
+      }
+
       const listingPda = new PublicKey(window.location.search.split("id=")[1]);
       const buyItx = await buyListingItx(
         program,
@@ -70,10 +76,11 @@ export const DetailView: FC = ({}) => {
       const sig = await sendTx(program, provider, wallet, buyItx);
       await provider.connection.confirmTransaction(sig);
 
-      alert('Purchase success')
+      notify({ type: 'success', message: 'Purchase successful!', txid: sig});
     }catch(error){
-      alert('Error')
+      notify({ type: 'error', message: `Error`, description: error?.message});
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -121,7 +128,7 @@ export const DetailView: FC = ({}) => {
                 <div className="p-3">
                   {(price / LAMPORTS_PER_SOL).toFixed(2)} SOL
                 </div>
-                <button onClick={handleBuyListing} className="btn">purchase</button>
+                <button disabled={loading} onClick={handleBuyListing} className="btn">{loading?'loading':'purchase'}</button>
               </div>
             </>
           )}

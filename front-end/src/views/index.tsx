@@ -4,3 +4,4 @@ export { AccountView } from "./account";
 export { DetailView } from "./detail";
 export { MarketView } from "./market";
 export { PendingView } from "./pending";
+export { PurchasesView } from "./purchases";
