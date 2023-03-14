@@ -179,7 +179,7 @@
           "isSigner": true
         },
         {
-          "name": "state",
+          "name": "seller",
           "isMut": true,
           "isSigner": false
         },
@@ -371,6 +371,11 @@
       "code": 6000,
       "name": "InvalidSigner",
       "msg": "invalid signer"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidBalance",
+      "msg": "invalid balance"
     }
   ]
 }

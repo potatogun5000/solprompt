@@ -91,6 +91,21 @@ export const createSellerAccountItx = async (program, provider, publicKey) => {
   }
 };
 
+export const withdrawSellerItx = async (program, provider, signer) => {
+  const seller = await getPda(program, "seller", [signer]);
+  const accounts = {
+    signer,
+    seller,
+    systemProgram: PROGRAM_ID,
+  };
+  const tx = new Transaction();
+  const itx = await program.instruction.withdrawBalance({
+    accounts,
+  });
+  tx.add(itx);
+  return tx;
+};
+
 export const buyListingItx = async (program, provider, listing, signer) => {
   try {
     const buyer = await getPda(program, "buyer", [signer]);
@@ -168,7 +183,7 @@ export const getListingAccount = async (program, provider, publicKey, id) => {
   const listingPda = await getDynamicPda(program, "listing", publicKey, id);
   const listData = await program.account.listing.fetch(listingPda);
   return listData;
-};
+}
 
 export const getListingAccounts = async (program, provider, publicKey) => {
   try {

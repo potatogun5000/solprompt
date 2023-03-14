@@ -24,6 +24,7 @@ import {
   getListingAccounts,
   getListingAccount,
   getListingPda,
+  withdrawSellerItx,
 } from "../../web3/util";
 
 const ItemView = (props): JSX.Element => {
@@ -99,7 +100,7 @@ const ItemView = (props): JSX.Element => {
           <th>
             {listingPda && (
               <Link
-                style={{textDecoration:'underline'}}
+                style={{ textDecoration: "underline" }}
                 target="_blank"
                 href={`/detail?id=${listingPda}`}
               >
@@ -146,6 +147,20 @@ export const AccountView: FC = ({}) => {
     }
   };
 
+  const handleWithdraw = async () => {
+    try {
+      const tx = await withdrawSellerItx(program, provider, publicKey);
+      const sig = await sendTx(program, provider, wallet, tx);
+      await provider.connection.confirmTransaction(sig);
+
+      setBalance(0);
+      alert('transfer success');
+      console.log(sig);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (publicKey && provider && program && !loaded) {
       getUser(program, provider, publicKey);
@@ -170,16 +185,21 @@ export const AccountView: FC = ({}) => {
                   Sales:
                 </div>
                 <div className="ml-5">
-                  {balance === -1 ? "loading" : (balance/LAMPORTS_PER_SOL).toFixed(1)} SOL
+                  {balance === -1
+                    ? "loading"
+                    : (balance / LAMPORTS_PER_SOL).toFixed(1)}{" "}
+                  SOL
                   <br />
                   {sales === -1 ? "loading" : sales} sold
                 </div>
               </div>
-              <button className="ml-10 btn">withdraw</button>
+              <button onClick={handleWithdraw} className="ml-10 btn">
+                withdraw
+              </button>
             </div>
           )}
         </div>
-        <div className="mb-5" style={{height:600, overflowY: 'scroll'}}>
+        <div className="mb-5" style={{ height: 600, overflowY: "scroll" }}>
           {publicKey &&
             (listings.length === 0 ? (
               <div>

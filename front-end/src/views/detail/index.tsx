@@ -58,17 +58,22 @@ export const DetailView: FC = ({}) => {
   };
 
   const handleBuyListing = async () => {
-    const listingPda = new PublicKey(window.location.search.split("id=")[1]);
-    const buyItx = await buyListingItx(
-      program,
-      provider,
-      listingPda,
-      publicKey
-    );
+    try{
+      const listingPda = new PublicKey(window.location.search.split("id=")[1]);
+      const buyItx = await buyListingItx(
+        program,
+        provider,
+        listingPda,
+        publicKey
+      );
 
-    const sig = await sendTx(program, provider, wallet, buyItx);
+      const sig = await sendTx(program, provider, wallet, buyItx);
+      await provider.connection.confirmTransaction(sig);
 
-    console.log(sig);
+      alert('Purchase success')
+    }catch(error){
+      alert('Error')
+    }
   };
 
   useEffect(() => {
