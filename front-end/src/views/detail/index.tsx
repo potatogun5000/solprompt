@@ -22,6 +22,8 @@ import {
   getListingAccounts,
   getListing
 } from "../../web3/util";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
 export const DetailView : FC = ({}) => {
   const { connection } = useConnection();
@@ -32,17 +34,29 @@ export const DetailView : FC = ({}) => {
 
   const [listing, setListing] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [images, setImages] = useState([]);
+  const [price, setPrice] = useState(0);
+
+  const getApi = async (pda) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_SERVER}/listing/${pda}`)
+    const json = await response.json();
+
+    setImages(json.images);
+    setListing(json);
+    console.log(json);
+  }
 
   const handleListing = async (program, provider, pda) => {
     const item = await getListing(program, provider, pda);
     console.log(item);
-    setListing(item);
+    setPrice(Number(item.price));
   }
 
   useEffect(() => {
     if (provider && program && !loaded) {
         const pda = window.location.search.split('id=')[1];
         handleListing(program, provider, pda);
+        getApi(pda);
 
         setLoaded(true);
     }
@@ -53,19 +67,26 @@ export const DetailView : FC = ({}) => {
       <div className="w-full hero-content flex flex-col">
         <div className="mt-6">
           <h1 className="text-center text-5xl md:pl-12 font-bold text-white bg-clip-text mb-4">
-            Detail
+            { listing && unescape(listing.title)}
           </h1>
         </div>
-        <div className="mb-5">
+          <Carousel centerMode={true}  centerSlidePercentage={50} showThumbs={false}>
+          {
+            images.map( (image , index)=> (
+            <div key={`immm-${index}`}>
+                <img alt="idc" src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${image}`} />
+            </div>
+            ))
+          }
+        </Carousel>
+          <div className="mb-5">
           {
             listing &&
               <>
-                <div>title</div>
-                <div>price: {Number(listing.price)} SOL</div>
+                <div>{price} SOL</div>
                 <div>description</div>
                 <div>pics</div>
-                <div>ai: {listing.engine}</div>
-                <div>seller: {listing.seller.toBase58()}</div>
+                <div>ai: Mid Journey</div>
                 <div><button className="btn">buy</button></div>
               </>
           }

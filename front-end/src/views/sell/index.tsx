@@ -80,8 +80,9 @@ export const SellView: FC = ({}) => {
 
     setLoading(true);
 
-    const aiType = (document.getElementById("aiType") as HTMLInputElement)
+    const aiType = (document.getElementById("ai_type") as HTMLInputElement)
       .value;
+
     let aiSettings = {
       aiType,
     } as any;
@@ -308,8 +309,8 @@ export const SellView: FC = ({}) => {
               <select
                 onChange={(e) => handleAiChange(e)}
                 required
-                name="aiType"
-                id="aiType"
+                name="ai_type"
+                id="ai_type"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
                 <option value="mid_journey">Mid Journey</option>

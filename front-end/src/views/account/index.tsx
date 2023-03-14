@@ -23,38 +23,6 @@ import {
   getListingAccounts,
 } from "../../web3/util";
 
-/*
-const WalletMultiButtonDynamic = dynamic(
-  async () =>
-    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-  { ssr: false }
-);
-approved
-: 
-false
-bump
-: 
-255
-engine
-: 
-"dog"
-id
-: 
-BN {negative: 0, words: Array(3), length: 1, red: null}
-price
-: 
-BN {negative: 0, words: Array(3), length: 1, red: null}
-sales
-: 
-BN {negative: 0, words: Array(3), length: 1, red: null}
-seller
-: 
-PublicKey {_bn: BN}
-token
-: 
-PublicKey {_bn: BN}
-*/
-
 export const AccountView: FC = ({}) => {
   const { connection } = useConnection();
   const wallet = useWallet();

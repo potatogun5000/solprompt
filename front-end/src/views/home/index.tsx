@@ -3,11 +3,17 @@ import Link from "next/link";
 import Image from "next/image";
 import pkg from "../../../package.json";
 import Text from "../../components/Text";
+import b58 from "b58";
 
 const Listing = (props): JSX.Element => {
-  const { images, title, listingPda} = props as any;
+  const { images, title, listingPda, aiSettings} = props as any;
+
   return (
-    <Link href={`/detail?id=${listingPda}`} style={{width:'100%', margin: 5}}>
+    <Link
+      className="p-1 hover:border-gray-700 border-transparent border-2 hover:border-current pb-2"
+      href={`/detail?id=${listingPda}`} style={{width:'100%'}}>
+      <div style={{width: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace:'nowrap', padding:5, fontSize:12, fontWeight: 'bold',  textAlign:'left', marginTop: 5}}>{unescape(title)}</div>
+
     <div style={{ width: "100%"}}>
       <div
         style={{
@@ -18,14 +24,16 @@ const Listing = (props): JSX.Element => {
       >
         <Image
           alt="idc"
-          src={`https://api.solprompt.io/static/${images[0].filename}`}
+          src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${images[0].filename}`}
           layout="fill"
           objectFit="cover"
           style={{borderRadius:5}}
         />
-        <div style={{color: 'white', fontSize: 14, padding: 5, letterSpacing: 0.7, fontWeight:'normal', zIndex:10, position:'absolute', bottom: 0, width:'100%', textAlign: 'center', backgroundColor: '#00000094'}}>1.392 SOL</div>
       </div>
-      <div style={{fontSize:13, textDecoration: 'underline', fontWeight: 'bold', letterSpacing: 1,  textAlign:'center', marginTop: 5}}>{unescape(title)}</div>
+      <div class="pl-2 pr-2">
+        <div style={{fontSize:12,  float:'left', marginTop: 5, fontWeight: 'normal', textTransform: 'uppercase'}}>Mid Journey</div>
+        <div style={{fontSize:12, fontWeight: 'bold', float:'right', marginTop: 5}}>◎ 2.3</div>
+      </div>
     </div>
     </Link>
   );
@@ -35,9 +43,10 @@ export const HomeView: FC = ({}) => {
   const [data, setData] = useState([]);
 
   const getData = async () => {
-    const response = await fetch("https://api.solprompt.io/listing/approved");
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_SERVER}/listing/approved`);
     const json = await response.json();
 
+    console.log(json);
     setData(json);
   };
 
@@ -89,8 +98,8 @@ export const HomeView: FC = ({}) => {
           <Text variant="paragraph">Featured Prompts</Text>
           <hr />
           <div className="flex flex-row justify-center pt-5">
-            {data.slice(0, 6).map((item, index) => (
-              <Listing images={item.images} title={item.title} listingPda={item.listing_pda}/>
+            {data.slice(0, 5).map((item, index) => (
+              <Listing images={item.images} title={item.title} listingPda={item.listing_pda} aiSettings={item.ai_settings}/>
             ))}
           </div>
         </div>
@@ -98,8 +107,8 @@ export const HomeView: FC = ({}) => {
           <Text variant="paragraph">Best Prompts</Text>
           <hr />
           <div className="flex flex-row justify-center pt-5">
-            {data.slice(6, 12).map((item, index) => (
-              <Listing images={item.images as any} title={item.title} listingPda={item.listing_pda}/>
+            {data.slice(5, 10).map((item, index) => (
+              <Listing images={item.images as any} title={item.title} aiSettings={item.ai_settings} listingPda={item.listing_pda}/>
             ))}
           </div>
         </div>

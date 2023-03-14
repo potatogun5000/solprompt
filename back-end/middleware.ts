@@ -19,6 +19,8 @@ export const validateListing = async (req, res, next) => {
       instructions: yup.string().required(),
       ai_settings: yup.string().required(),
       owner: yup.string().required(),
+      description: yup.string().required(),
+      ai_type: yup.string().required(),
     });
 
     const valid = await schema.isValid(req.body);
@@ -36,6 +38,8 @@ export const validateListing = async (req, res, next) => {
     res.locals.cleaned.ai_settings = b58.encode(
       Buffer.from(req.body.ai_settings)
     );
+    res.locals.cleaned.description = escape(req.body.description);
+    res.locals.cleaned.ai_type = escape(req.body.description);
 
     next();
   } catch (error) {
@@ -67,14 +71,6 @@ export const getPendingListings = async (req, res, next) => {
   res.send(result);
 };
 
-export const approveListing = async (req, res, next) => {
-  await res.locals.db.run(
-    "UPDATE prompts SET approved = 1 WHERE id = ?",
-    req.params.id
-  );
-  res.send("done");
-};
-
 export const getApprovedListings = async (req, res, next) => {
   res.send(res.locals.memoryCache.approved);
 };
@@ -94,7 +90,7 @@ export const uploadListing = async (req, res, next) => {
       );
     }
     await res.locals.db.exec(
-      `INSERT INTO prompts VALUES (NULL, "${res.locals.cleaned.listing_pda}", "${res.locals.cleaned.title}", "${res.locals.cleaned.prompt}", "${res.locals.cleaned.instructions}", "${res.locals.cleaned.ai_settings}", "${res.locals.cleaned.signature}", 0, 0, 0, "${res.locals.cleaned.owner}")`
+      `INSERT INTO prompts VALUES (NULL, "${res.locals.cleaned.listing_pda}", "${res.locals.cleaned.title}", "${res.locals.cleaned.prompt}", "${res.locals.cleaned.instructions}", "${res.locals.cleaned.ai_settings}", "${res.locals.cleaned.signature}", 0, 0, 0, "${res.locals.cleaned.owner}", "${res.locals.cleaned.description}", "${res.locals.cleaned.ai_type}")`
     );
 
     res.redirect("https://solprompt.io/pending");
@@ -112,6 +108,10 @@ export const getListing = async (req, res, next) => {
     const allImages = await res.locals.db.all(
       `SELECT filename FROM images WHERE listing_pda = "${req.params.id}"`
     );
+
+    delete listingInfo.instructions;
+    delete listingInfo.prompt;
+    delete listingInfo.ai_settings;
 
     res.send({
       ...listingInfo,

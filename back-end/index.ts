@@ -15,7 +15,6 @@ import {
   getListing,
   getAllListings,
   getPendingListings,
-  approveListing,
   requireAdmin,
   setLocals,
   errorHandler,
@@ -72,8 +71,6 @@ if (!fs.existsSync(`./${publicFolder}`)) {
 
   app.get("/listing/all", requireAdmin, getAllListings);
   app.get("/listing/pending", requireAdmin, getPendingListings);
-  app.put("/listing/:id", requireAdmin, approveListing);
-
   app.get("/listing/approved", getApprovedListings);
   app.post(
     "/listing",
