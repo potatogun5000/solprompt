@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { PublicKey } from "@solana/web3.js";
 import { getPda, getDynamicPda } from "./db-helpers";
 import * as anchor from "@project-serum/anchor";
+import nacl from "tweetnacl";
 
 export const setLocals =
   (db, memoryCache, connection) => async (req, res, next) => {
@@ -89,6 +90,20 @@ export const getAllListings = async (req, res, next) => {
 
 export const getOwnedListings = async (req, res, next) => {
   try {
+    const signatureUint8 = b58.decode(req.params.sig);
+    const message = new TextEncoder().encode("sign in solprompt");
+    const pubKeyUint8 = b58.decode(req.params.address);
+    const verified = nacl.sign.detached.verify(
+      message,
+      signatureUint8,
+      pubKeyUint8
+    );
+
+    if(!verified)
+      throw new Error('not verified')
+
+    console.log('verified', verified);
+
     const buyer = new PublicKey(req.params.address);
 
     const buyerPda = await getPda(process.env.CONTRACT_ID, "buyer", [buyer]);

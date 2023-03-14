@@ -1,4 +1,4 @@
-import { FC, useState, useCallback, useEffect } from "react";
+import { FC, useState, useCallback, useEffect, useRef} from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,7 +19,7 @@ import {
   useProgram,
   getBuyerAccount,
 } from "../../web3/util";
-import {decode} from "b58";
+import {encode, decode} from "b58";
 
 const ListingView = (props): JSX.Element => {
   const { item, publicKey, index, select, setSelected} = props as any;
@@ -48,7 +48,7 @@ const ListingView = (props): JSX.Element => {
 export const PurchasesView: FC = ({}) => {
   const { connection } = useConnection();
   const wallet = useWallet();
-  const { publicKey, sendTransaction } = wallet;
+  const { publicKey, sendTransaction, signMessage } = wallet;
 
   const { program } = useProgram();
   const { provider } = useProvider();
@@ -56,13 +56,16 @@ export const PurchasesView: FC = ({}) => {
   const [listings, setListings] = useState([]);
   const [select, setSelected] = useState(0);
   const [aiSettings, setAiSettings] = useState({});
+  const didLogRef = useRef(false);
 
   const getOwnedListings = async () => {
+    const signature = encode(
+      await signMessage(new TextEncoder().encode('sign in solprompt'))
+    );
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}`
+      `${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}/${signature}`
     );
     const json = await response.json();
-    console.log(json);
     setListings(json);
   };
 
@@ -75,7 +78,8 @@ export const PurchasesView: FC = ({}) => {
   },[listings, select])
 
   useEffect(() => {
-    if (publicKey) {
+    if (publicKey && !didLogRef.current) {
+      didLogRef.current = true;
       getOwnedListings();
     }
   }, [wallet]);

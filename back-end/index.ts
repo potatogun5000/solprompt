@@ -80,7 +80,7 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   );
   app.get("/listing/:id", getListing);
 
-  app.get("/buyer/:address", getOwnedListings);
+  app.get("/buyer/:address/:sig", getOwnedListings);
 
   app.use(errorHandler);
 
