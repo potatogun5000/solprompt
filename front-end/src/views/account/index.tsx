@@ -170,7 +170,7 @@ export const AccountView: FC = ({}) => {
                   Sales:
                 </div>
                 <div className="ml-5">
-                  {balance === -1 ? "loading" : balance} SOL
+                  {balance === -1 ? "loading" : (balance/LAMPORTS_PER_SOL).toFixed(1)} SOL
                   <br />
                   {sales === -1 ? "loading" : sales} sold
                 </div>
@@ -179,7 +179,7 @@ export const AccountView: FC = ({}) => {
             </div>
           )}
         </div>
-        <div className="mb-5">
+        <div className="mb-5" style={{height:600, overflowY: 'scroll'}}>
           {publicKey &&
             (listings.length === 0 ? (
               <div>
@@ -204,31 +204,6 @@ export const AccountView: FC = ({}) => {
                     provider={provider}
                   />
                 ))}
-                {/*listings.map((item) => (
-                  <>
-                    <tr className="table_content">
-                      <th>{
-                        imageMap.hasOwnProperty(item.pda.toBase58()) &&
-                          <Image alt="idc" src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${imageMap[item.pda.toBase58()]}`} width={50} height={50}/>
-                      }</th>
-                      <th>{item.pda.toBase58().slice(0, 7)}</th>
-                      <th>{item.engine}</th>
-                      <th>{Number(item.price)} SOL</th>
-                      <th>{Number(item.sales)}</th>
-                      <th>{item.approved ? "Approved" : "Pending"}</th>
-                      <th>
-                        <Link
-                          rel="noreferrer"
-                          className="underline"
-                          target="_blank"
-                          href={`/detail?id=${item.pda.toBase58()}`}
-                        >
-                          view
-                        </Link>
-                      </th>
-                    </tr>
-                  </>
-                ))*/}
               </table>
             ))}
           {!publicKey && <div>Connect wallet to view</div>}
