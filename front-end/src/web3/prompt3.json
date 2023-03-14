@@ -315,8 +315,8 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "engine",
-            "type": "string"
+            "name": "approved",
+            "type": "bool"
           },
           {
             "name": "sales",
@@ -339,12 +339,12 @@
             "type": "u64"
           },
           {
-            "name": "approved",
-            "type": "bool"
-          },
-          {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "engine",
+            "type": "string"
           }
         ]
       }
@@ -366,7 +366,11 @@
       }
     }
   ],
-  "metadata": {
-    "address": "CKi9rre9A3oL99JB7BbU3rpBJXNRDWF2Qm2iMpYYTxAn"
-  }
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidSigner",
+      "msg": "invalid signer"
+    }
+  ]
 }
