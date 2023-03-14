@@ -28,11 +28,11 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     //const network = networkConfiguration as WalletAdapterNetwork;
     //const endpoint = useMemo(() => clusterApiUrl(network), [network]);
     const network = WalletAdapterNetwork.Mainnet;
-    const endpoint = 'https://rpc.helius.xyz/?api-key=7d3ccdb4-fc3d-46bb-b561-366642d291b6';
+    const endpoint = 'https://api.mainnet-beta.solana.com';//https://rpc.helius.xyz/?api-key=7d3ccdb4-fc3d-46bb-b561-366642d291b6';
 
     const config: ConnectionConfig = {
       commitment: 'confirmed',
-      confirmTransactionInitialTimeout: 1000 * 150,
+      confirmTransactionInitialTimeout: 1000 * 120,
     };
 
 
