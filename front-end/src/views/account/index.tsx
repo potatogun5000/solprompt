@@ -183,11 +183,11 @@ export const AccountView: FC = ({}) => {
           {publicKey && (
             <div className="flex flex-row">
               <div className="flex flex-row mr-10">
-                <div>
+                <div className="text-lg">
                   Balance: <br />
                   Sales:
                 </div>
-                <div className="ml-5">
+                <div className="ml-5 text-lg">
                   {balance === -1
                     ? "loading"
                     : (balance / LAMPORTS_PER_SOL).toFixed(1)}{" "}
@@ -202,7 +202,7 @@ export const AccountView: FC = ({}) => {
             </div>
           )}
         </div>
-        <div className="mb-5" style={{ height: 600, overflowY: "scroll" }}>
+        <div className="mb-5">
           {publicKey &&
             (listings.length === 0 ? (
               <div>

@@ -93,7 +93,7 @@ export const PurchasesView: FC = ({}) => {
       listings.length ?
         <div className="flex flex-row" style={{width:'100%', padding:50}}>
           <div className="flex-1" style={{width:'50%'}}>
-            <h1 className="text-lg font-bold text-center">Purchases</h1>
+            <h1 className="text-lg font-bold text-center">History</h1>
             <div style={{ padding: 25 }}>
               {listings.map((item, index) => (
                 <ListingView {...item} index={index} select={select} setSelected={setSelected}/>
