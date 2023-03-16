@@ -13,15 +13,15 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
     return (
         <>
           <Head>
-            <title>Prompt3.ai</title>
+            <title>Sol Prompt - Marketplace</title>
           </Head>
-
           <ContextProvider>
             <div className="flex flex-col h-screen">
               <Notifications />
               <AppBar/>
               <ContentContainer>
                 <Component {...pageProps} />
+                 <Footer/>
               </ContentContainer>
             </div>
           </ContextProvider>

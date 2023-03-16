@@ -47,7 +47,7 @@ const variants = {
 const Text = ({ variant, className, href, children }: TextProps) => (
     <p className={cn(className, variants[variant])}>
         {href ? (
-            <Link href={href} className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
+            <Link href={href} className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap" style={{fontFamily:'monospace'}}>
                 {children}
             </Link>
         ) : (

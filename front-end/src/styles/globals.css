@@ -1,6 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Dokdo&family=Italianno&family=Tangerine&display=swap');
+
+.title_font {
+  letter-spacing: 1px;
+  font-family: 'Dokdo', cursive;
+}
+
+.cursive_font {
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+
+.tint {
+   filter: sepia(10%) saturate(100%) brightness(50%);
+}
 
 th {
   padding: 10px;
@@ -17,13 +35,14 @@ th {
   font-size: 14px;
 }
 
+
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background-color: #080b16;
+  font-family: monospace;
+  background-color: #121418;;
 }
 
 a {
