@@ -94,7 +94,7 @@ export const approvePromptsLoop = async (db, connection) => {
   } catch (error) {
     console.log("somethings wrong", error);
   }
-  await new Promise((r) => setTimeout(r, 1000 * 10));
+  await new Promise((r) => setTimeout(r, 1000 * 60 * 10));
   return approvePromptsLoop(db, connection);
 };
 
@@ -132,6 +132,6 @@ export const confirmPromptsLoop = async (db, connection) => {
     console.log("somethings wrong", error);
   }
 
-  await new Promise((r) => setTimeout(r, 5000));
+  await new Promise((r) => setTimeout(r, 1000 * 60 * 10));
   return confirmPromptsLoop(db, connection);
 };
