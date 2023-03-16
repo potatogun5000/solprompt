@@ -59,14 +59,39 @@ export const PurchasesView: FC = ({}) => {
   const didLogRef = useRef(false);
 
   const getOwnedListings = async () => {
-    const signature = encode(
-      await signMessage(new TextEncoder().encode('sign in solprompt'))
-    );
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}/${signature}`
-    );
-    const json = await response.json();
-    setListings(json);
+    try{
+      //not really secure but good for now
+
+      let signedMsg;
+      try{
+        signedMsg = localStorage.getItem(`${publicKey.toBase58()}-signed`)
+        console.log('wtf', signedMsg)
+        if(!signedMsg)
+          throw new Error('couldnt get or doesnt have');
+      }catch(error){
+        console.log(error)
+        signedMsg = encode(
+          await signMessage(new TextEncoder().encode('sign in solprompt'))
+        );
+
+        try{
+          localStorage.setItem(`${publicKey.toBase58()}-signed`, signedMsg);
+        }catch(error){
+          console.log(error.message);
+          console.log('couldnt save signedMsg to local storage');
+        }
+      }
+
+      console.log(`${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}/${signedMsg}`);
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}/${signedMsg}`
+      );
+      const json = await response.json();
+      setListings(json);
+    }catch(err){
+        notify({ type: "error", message: err.message });
+    }
   };
 
   useEffect(() => {
