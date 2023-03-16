@@ -68,3 +68,10 @@ a {
 }
 
 
+
+.shadow{
+  font-weight: 100;
+  font-size: 33px;
+  letter-spacing:-17px;
+  text-shadow: -100px 200px 69px rgba(0,0,0,0.2);
+}
