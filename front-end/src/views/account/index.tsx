@@ -37,10 +37,10 @@ const ItemView = (props): JSX.Element => {
   const loadIt = async () => {
     try {
       const data = await getListingAccount(program, provider, publicKey, item);
+      console.log('wtf', data);
       setData(data);
-      console.log(data);
     } catch (error) {
-      //console.log(error);
+      console.log('wtf', error);
     }
   };
 
@@ -141,9 +141,15 @@ export const AccountView: FC = ({}) => {
     try {
       const user = await getSellerAccount(program, provider, publicKey);
 
-      setSales(Number(user.sales));
-      setBalance(Number(user.balance));
-      setListings([...Array(Number(user.listings)).keys()].reverse());
+      if(!user){
+        setSales(0);
+        setBalance(0);
+        setBalance([]);
+      }else{
+        setSales(Number(user.sales));
+        setBalance(Number(user.balance));
+        setListings([...Array(Number(user.listings)).keys()].reverse());
+      }
     } catch (error) {
       console.log(error);
     }
