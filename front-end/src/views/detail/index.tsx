@@ -119,11 +119,9 @@ export const DetailView: FC = ({}) => {
           {listing && (
             <>
               <div>{listing && listing.ai_type}</div>
-              <hr />
               <div className="p-4 m-4">
                 {listing && unescape(listing.description)}
               </div>
-              <hr />
               <div className="flex flex-row justify-center pt-5">
                 <div className="p-3">
                   {(price / LAMPORTS_PER_SOL).toFixed(2)} SOL

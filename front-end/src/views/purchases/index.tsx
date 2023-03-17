@@ -88,6 +88,7 @@ export const PurchasesView: FC = ({}) => {
         `${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}/${signedMsg}`
       );
       const json = await response.json();
+      console.log(json);
       setListings(json);
     }catch(err){
         notify({ type: "error", message: err.message });
@@ -160,7 +161,7 @@ export const PurchasesView: FC = ({}) => {
         :
         <div>
           {
-            publicKey ? 'loading' : 'Connect your wallet'
+            publicKey ? 'No Purchases yet' : 'Connect your wallet'
           }
         </div>
       }
