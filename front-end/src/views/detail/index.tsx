@@ -1,6 +1,7 @@
 import { FC, useState, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import Link from "next/link";
 import axios from "axios";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
@@ -48,6 +49,7 @@ export const DetailView: FC = ({}) => {
     const json = await response.json();
 
     setImages(json.images);
+    console.log(json)
     setListing(json);
     console.log(json);
   };
@@ -60,9 +62,9 @@ export const DetailView: FC = ({}) => {
 
   const handleBuyListing = async () => {
     setLoading(true);
-    try{
-      if(!publicKey){
-        return notify({ type: 'error', message: 'Select wallet first'});
+    try {
+      if (!publicKey) {
+        return notify({ type: "error", message: "Select wallet first" });
       }
 
       const listingPda = new PublicKey(window.location.search.split("id=")[1]);
@@ -76,9 +78,9 @@ export const DetailView: FC = ({}) => {
       const sig = await sendTx(program, provider, wallet, buyItx);
       await provider.connection.confirmTransaction(sig);
 
-      notify({ type: 'success', message: 'Purchase successful!', txid: sig});
-    }catch(error){
-      notify({ type: 'error', message: `Error`, description: error?.message});
+      notify({ type: "success", message: "Purchase successful!", txid: sig });
+    } catch (error) {
+      notify({ type: "error", message: `Error`, description: error?.message });
     }
     setLoading(false);
   };
@@ -95,43 +97,67 @@ export const DetailView: FC = ({}) => {
 
   return (
     <div className="md:hero mx-auto p-4">
-      <div className="w-full hero-content flex flex-col max-w-lg">
-        <div className="mt-6">
-          <h1 className="text-center text-4xl font-bold text-white bg-clip-text mb-4">
-            {listing && unescape(listing.title)}
-          </h1>
-        </div>
-        <Carousel
-          centerMode={true}
-          centerSlidePercentage={50}
-          showThumbs={false}
-        >
-          {images.map((image, index) => (
-            <div key={`immm-${index}`}>
-              <img
-                alt="idc"
-                src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${image}`}
-              />
-            </div>
-          ))}
-        </Carousel>
-        <div className="mb-5">
-          {listing && (
-            <>
-              <div>{listing && listing.ai_type}</div>
-              <div className="p-4 m-4">
-                {listing && unescape(listing.description)}
-              </div>
-              <div className="flex flex-row justify-center pt-5">
-                <div className="p-3">
-                  {(price / LAMPORTS_PER_SOL).toFixed(2)} SOL
+      <div className="flex flex-col sm:flex-row " style={{maxWidth: 800, margin: '0 auto', marginTop: 50}}>
+          <div className="flex-1 xs:w-full sm:w-1/2 ">
+            <Carousel
+              centerMode={true}
+              centerSlidePercentage={100}
+              showThumbs={true}
+            >
+              {images.map((image, index) => (
+                <div key={`immm-${index}`}>
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${image}`}
+                  />
                 </div>
-                <button disabled={loading} onClick={handleBuyListing} className="btn">{loading?'loading':'purchase'}</button>
-              </div>
-            </>
-          )}
+              ))}
+            </Carousel>
+          </div>
+          <div className="flex-1" style={{padding:40}}>
+            {listing && (
+              <>
+                <h1 className="text-center text-4xl font-bold text-white bg-clip-text mb-4">
+                  {unescape(listing.title)}
+                </h1>
+                <h1 className="text-center text-right text-xs text-white bg-clip-text mb-4">
+                  created by <Link style={{color:'##6bc1ff'}} target="_blank" href={`https://solscan.io/account/${listing.owner}`}>{listing.owner.slice(0,5)}...{listing.owner.slice(-5)}</Link>
+                </h1>
+
+                <div className="p-4 m-10">
+                  {unescape(listing.description)}
+                </div>
+                <div className="m-5 flex flex-row justify-center">
+                  <ul className="p-5 text-right">
+                    <li>Word Count:</li>
+                    <li>Type:</li>
+                    <li>Tested:</li>
+                  </ul>
+                  <ul className="text-left p-5">
+                    <li>?</li>
+                    <li>{listing.ai_type.replace('_',' ')}</li>
+                    <li>yes</li>
+                  </ul>
+                </div>
+
+                <div className="flex flex-row justify-center pt-1">
+                  <div className="p-3 text-lg">
+                    {(price / LAMPORTS_PER_SOL).toFixed(2)} SOL
+                  </div>
+                  <button
+                    disabled={loading}
+                    onClick={handleBuyListing}
+                    className="btn px-10 text-lg"
+                    style={{backgroundColor: '#7075d3'}}
+                  >
+                    {loading ? "loading" : "purchase"}
+                  </button>
+                </div>
+                <h1  style={{fontSize:10, margin:35}}>After purchasing, you will gain access to the prompt in the <Link href="/purchases">purchases</Link> tab.
+                You must already have access to Midjourney to use this prompt.</h1>
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
   );
 };

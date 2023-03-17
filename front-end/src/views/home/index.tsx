@@ -145,12 +145,12 @@ export const HomeView: FC = ({}) => {
             <h1 className="title_font text-center text-5xl font-bold text-white bg-clip-text mb-1 ">
               Marketplace of the Future
             </h1>
-            <h1 className="cursive_font text-center text-lg ml-1 text-white bg-clip-text mb-4 text-left font-light">
+            <h1 className="cursive_font text-center text-lg ml-1 text-white bg-clip-text mb-4 text-left font-light" style={{
+              textShadow: 'rgb(225 0 176) 3px 2px 0px'
+              }}>
               Built on Solana
             </h1>
-            <p className="cursive_font text-center pt-10 text-2xl text-white bg-clip-text mb-4 text-left font-light" style={{
-              textShadow: '0px 1px 16px #e100b0'
-              }}>
+            <p className="cursive_font text-center pt-10 text-2xl text-white bg-clip-text mb-4 text-left font-light" >
               We support DALL·E, GPT, Midjourney, Stable Diffusion, ChatGPT
             </p>
             <div className="flex flex-col mt-2">
