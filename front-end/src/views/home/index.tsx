@@ -76,12 +76,12 @@ const Listing = (props): JSX.Element => {
 };
 
 const bgImages = [
-  "https://media.discordapp.net/attachments/1083449288660635760/1085900244883099668/polus_cyberpunkbillboard_c13799d8-eaa0-4967-865f-9e2b0736280c.png",
-  "https://media.discordapp.net/attachments/1083449288660635760/1085917259538636830/polus_cyberpunkbillboard_9c75ccc1-b880-4928-87a5-28fadcd13f4d.png",
-  "https://media.discordapp.net/attachments/1083449288660635760/1085917298168184883/polus_cyberpunkbillboard_c355f474-932f-4cd4-81d8-8cd3220d880c.png",
-  "https://media.discordapp.net/attachments/1083449288660635760/1085917481719316502/polus_cyberpunkbillboard_e1dc33da-503b-4bae-a6d2-667f7f5f6e78.png",
-  "https://media.discordapp.net/attachments/1083449288660635760/1085917541257449493/polus_cyberpunkbillboard_33f85c27-7389-4bfa-9529-c9a8ec3ab745.png",
-  "https://media.discordapp.net/attachments/1083449288660635760/1085917588644708372/polus_cyberpunkbillboard_c1ec4640-bce9-48ef-9670-e6b1c2d671e3.png",
+  "bg0.png",
+  "bg1.png",
+  "bg2.png",
+  "bg3.png",
+  "bg4.png",
+  "bg5.png",
 ];
 
 export const HomeView: FC = ({}) => {
