@@ -28,7 +28,7 @@ export const AppBar: React.FC = () => {
           <div className="hidden sm:inline w-22 h-22 md:p-2 ml-10 flex-row flex">
             <div className="flex flex-row">
               <h1 className="shadow ml-1 pt-1">
-                <Image src="/logo2.png" width={50} height={50} style={{
+                <Image src="/logo2.png" width={50} height={50} alt="idc" style={{
                   filter: 'hue-rotate(232deg) brightness(3)'
                 }}/>
               </h1>
