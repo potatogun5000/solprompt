@@ -33,7 +33,7 @@ const Listing = (props): JSX.Element => {
       </div>
       <div className="pl-2 pr-2">
         <div style={{fontSize:12,  float:'left', marginTop: 5, fontWeight: 'normal', textTransform: 'uppercase'}}>Mid Journey</div>
-        <div style={{fontSize:12, fontWeight: 'bold', float:'right', marginTop: 5}}>◎ ${price}</div>
+        <div style={{fontSize:12, fontWeight: 'bold', float:'right', marginTop: 5}}>◎ {price}</div>
       </div>
     </div>
     </Link>
@@ -63,7 +63,10 @@ export const MarketView: FC = ({}) => {
           </h1>
         </div>
         <div className="w-full text-left font-bold">
-          <div className="flex flex-row justify-center pt-5" style={{width:700, flexWrap: 'wrap'}}>
+          <div
+            className="flex flex-row justify-center pt-5"
+            style={{ flexWrap: "wrap" }}
+          >
             {data.map((item, index) => (
               <Listing className="flex" images={item.images} title={item.title} listingPda={item.listing_pda} aiSettings={item.ai_settings} price={item.price}/>
             ))}
