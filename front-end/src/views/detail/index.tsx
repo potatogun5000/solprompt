@@ -98,7 +98,7 @@ export const DetailView: FC = ({}) => {
   return (
     <div className="md:hero mx-auto p-4">
       <div className="flex flex-col sm:flex-row " style={{maxWidth: 800, margin: '0 auto', marginTop: 50}}>
-          <div className="flex-1 xs:w-full sm:w-1/2 ">
+          <div className="flex-1 xs:w-full sm:w-1/2 mt-10">
             <Carousel
               centerMode={true}
               centerSlidePercentage={100}
