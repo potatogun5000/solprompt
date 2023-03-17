@@ -120,7 +120,7 @@ export const DetailView: FC = ({}) => {
                   {unescape(listing.title)}
                 </h1>
                 <h1 className="text-center text-right text-xs text-white bg-clip-text mb-4">
-                  created by <Link style={{color:'##6bc1ff'}} target="_blank" href={`https://solscan.io/account/${listing.owner}`}>{listing.owner.slice(0,5)}...{listing.owner.slice(-5)}</Link>
+                  created by <Link style={{color:'#00adff'}} target="_blank" href={`https://solscan.io/account/${listing.owner}`}>{listing.owner.slice(0,5)}...{listing.owner.slice(-5)}</Link>
                 </h1>
 
                 <div className="p-4 m-10">

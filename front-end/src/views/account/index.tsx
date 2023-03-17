@@ -144,7 +144,7 @@ export const AccountView: FC = ({}) => {
       if(!user){
         setSales(0);
         setBalance(0);
-        setBalance([]);
+        setListings([]);
       }else{
         setSales(Number(user.sales));
         setBalance(Number(user.balance));

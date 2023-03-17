@@ -1,4 +1,4 @@
-import { FC, useState, useCallback, useEffect, useRef} from "react";
+import { FC, useState, useCallback, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,36 +14,8 @@ import {
   VersionedTransaction,
 } from "@solana/web3.js";
 import { notify } from "../../utils/notifications";
-import {
-  useProvider,
-  useProgram,
-  getBuyerAccount,
-} from "../../web3/util";
-import {encode, decode} from "b58";
-
-const ListingView = (props): JSX.Element => {
-  const { item, publicKey, index, select, setSelected} = props as any;
-
-  return (
-    <div className="flex flex-col" style={{ width: "100%", border: "1px solid white", padding: 10 }}>
-      <h1 className="text-sm p-2 text-center mb-3">{unescape(props.title)}</h1>
-      <div className="flex flex-row">
-    {
-      select === index
-        ?
-        <button className="opacity-50 cursor-not-allowed bg-transparent hover:bg-blue-500 text-grey-700 font-semibold hover:text-white py-2 px-4 border border-grey-500 hover:border-transparent rounded">
-        select
-      </button>
-      :
-      <button onClick={() => setSelected(index)} className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-        select
-      </button>
-    }
-      <Link className="ml-3 pt-3 underline text-blue-300 flex-1 text-right" href={`/detail?id=${props.listing_pda}`} target="_blank" style={{float:'right'}}>view</Link>
-      </div>
-    </div>
-  );
-};
+import { useProvider, useProgram, getBuyerAccount } from "../../web3/util";
+import { encode, decode } from "b58";
 
 export const PurchasesView: FC = ({}) => {
   const { connection } = useConnection();
@@ -57,51 +29,73 @@ export const PurchasesView: FC = ({}) => {
   const [select, setSelected] = useState(0);
   const [aiSettings, setAiSettings] = useState({});
   const didLogRef = useRef(false);
+  const [imageMap, setImageMap] = useState({})
+
+  const getImages = async (json) => {
+    let promizes = [];
+    for(let i =0; i < json.length; i++){
+      promizes.push(
+        fetch(`${process.env.NEXT_PUBLIC_API_SERVER}/listing/${json[i].listing_pda}`)
+      );
+    }
+    const resolved = await Promise.all(promizes);
+
+    let iMap = {}
+    for(let i = 0; i < resolved.length; i++){
+      const resv = await resolved[i].json();
+      iMap[resv.listing_pda] = resv.images[0]
+    }
+
+    setImageMap(iMap)
+  }
 
   const getOwnedListings = async () => {
-    try{
+    try {
       //not really secure but good for now
 
       let signedMsg;
-      try{
-        signedMsg = localStorage.getItem(`${publicKey.toBase58()}-signed`)
-        console.log('wtf', signedMsg)
-        if(!signedMsg)
-          throw new Error('couldnt get or doesnt have');
-      }catch(error){
-        console.log(error)
+      try {
+        signedMsg = localStorage.getItem(`${publicKey.toBase58()}-signed`);
+        console.log("wtf", signedMsg);
+        if (!signedMsg) throw new Error("couldnt get or doesnt have");
+      } catch (error) {
+        console.log(error);
         signedMsg = encode(
-          await signMessage(new TextEncoder().encode('sign in solprompt'))
+          await signMessage(new TextEncoder().encode("sign in solprompt"))
         );
 
-        try{
+        try {
           localStorage.setItem(`${publicKey.toBase58()}-signed`, signedMsg);
-        }catch(error){
+        } catch (error) {
           console.log(error.message);
-          console.log('couldnt save signedMsg to local storage');
+          console.log("couldnt save signedMsg to local storage");
         }
       }
 
-      console.log(`${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}/${signedMsg}`);
+      console.log(
+        `${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}/${signedMsg}`
+      );
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_SERVER}/buyer/${publicKey}/${signedMsg}`
       );
       const json = await response.json();
-      console.log(json);
       setListings(json);
-    }catch(err){
-        notify({ type: "error", message: err.message });
+      getImages(json);
+    } catch (err) {
+      notify({ type: "error", message: err.message });
     }
   };
 
   useEffect(() => {
-    if(listings.length){
-      const _aiSettings = JSON.parse(decode(listings[select].ai_settings).toString());
+    if (listings.length) {
+      const _aiSettings = JSON.parse(
+        decode(listings[select].ai_settings).toString()
+      );
       delete _aiSettings.aiType;
       setAiSettings(_aiSettings);
     }
-  },[listings, select])
+  }, [listings, select]);
 
   useEffect(() => {
     if (publicKey && !didLogRef.current) {
@@ -110,61 +104,66 @@ export const PurchasesView: FC = ({}) => {
     }
   }, [wallet]);
 
+  const downloadPrompt = async (item) => {
+    const _aiSettings = JSON.parse(
+        decode(listings[select].ai_settings).toString()
+      );
+
+    const fileText = JSON.stringify({
+      title: unescape(item.title),
+      settings: _aiSettings,
+      prompt: unescape(item.prompt),
+      instructions: unescape(item.instructions)
+    }, null, 4);
+
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileText));
+    element.setAttribute('download', `${unescape(item.title).split(' ').join('-')}-prompt.txt`);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
   return (
     <div className="md:hero mx-auto p-4">
       <div className="w-full hero-content flex flex-col">
         <div className="mt-6">
           <h1 className="text-center text-5xl md:pl-12 font-bold text-white bg-clip-text mb-4">
-            Purchases
+            Purchase History
           </h1>
         </div>
-
-    {
-      listings.length ?
-        <div className="flex flex-row" style={{width:'100%', padding:50}}>
-          <div className="flex-1" style={{width:'50%'}}>
-            <h1 className="text-lg font-bold text-center">History</h1>
-            <div style={{ padding: 25 }}>
-              {listings.map((item, index) => (
-                <ListingView {...item} index={index} select={select} setSelected={setSelected}/>
-              ))}
-            </div>
+        <div className="flex flex-col" style={{ width: "100%", padding: 50, paddingTop: 20 }}>
+          <div className="flex flex-row mb-5">
+            <h1 style={{width:150}}></h1>
+            <h1 className="flex-1">Title</h1>
+            <h1 className="flex-1">Seller</h1>
+            <h1 className="flex-1">Price</h1>
+            <h1 className="flex-1 text-right">Options</h1>
           </div>
-          <div className="flex-1" style={{width:'50%', padding:0}}>
-            <h1 className="text-lg font-bold text-center">
-              { unescape(listings[select].title)}
-            </h1>
-            <h1 className="text-xs font-bold text-center uppercase">
-              { listings[select].ai_type.replace('_', ' ')}
-            </h1>
-            <h1 className="text-md font-bold">Prompt</h1>
-            <p className="text-sm font-weight-normal p-3 m-3 text-black bg-white">
-              { unescape(listings[select].prompt)}
-            </p>
-
-            <h1 className="text-md font-bold">Instructions</h1>
-            <p className="text-sm font-weight-normal p-3 m-3 text-black bg-white">
-              { unescape(listings[select].instructions)}
-            </p>
-            {
-              Object.keys(aiSettings).map( a => (
-                <>
-                  <h1 className="text-md font-bold">{a}</h1>
-                  <p className="text-sm font-weight-normal p-3 m-3 text-black bg-white">
-                  { aiSettings[a] }
-                  </p>
-                </>
-              ))
-            }
-          </div>
-        </div>
-        :
-        <div>
-          {
-            publicKey ? 'No Purchases yet' : 'Connect your wallet'
+          <hr />
+          {listings.length ?
+            listings.map((item, index) => (
+              <div key={`ite2-${index}`} className="flex flex-row mt-5" style={{ height: 100}} >
+                {
+                imageMap.hasOwnProperty(item.listing_pda) ?
+                  <Image src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${imageMap[item.listing_pda]}`} alt="idc" width={100} height={30} style={{marginRight:50}} />
+                : <div>...</div>
+                }
+                <h1 className="flex-1">{unescape(item.title)}</h1>
+                <h2 className="flex-1">
+                  <Link style={{color:'#00adff', textDecoration: 'underline'}} target="_blank" href={`https://solscan.io/account/${item.owner}`}>{item.owner.slice(0,5)}...{item.owner.slice(-5)}</Link>
+                </h2>
+                <h2 className="flex-1">{item.price} SOL</h2>
+                <h2 className="flex-1 flex flex-col text-right">
+                  <h3 style={{textDecoration:'underline', color:'#00adff', cursor: 'pointer'}} onClick={()=>downloadPrompt(item)}>Download Prompt</h3>
+                </h2>
+              </div>
+            ))
+            :
+              <div></div>
           }
         </div>
-      }
       </div>
     </div>
   );
