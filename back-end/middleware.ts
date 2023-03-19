@@ -163,6 +163,29 @@ export const uploadListing = async (req, res, next) => {
   }
 };
 
+export const getListingV2 = async (req, res, next) => {
+  try {
+    const listingInfo = await res.locals.db.get(
+      "SELECT * FROM prompts WHERE listing_pda = ? AND approved = 1",
+      req.params.id
+    );
+    const images = await res.locals.db.all(
+      `SELECT filename, cdn FROM images WHERE listing_pda = "${req.params.id}"`
+    );
+
+    delete listingInfo.instructions;
+    delete listingInfo.prompt;
+    delete listingInfo.ai_settings;
+
+    res.send({
+      ...listingInfo,
+      images,
+    });
+  } catch (error) {
+    res.send("does not exist");
+  }
+};
+
 export const getListing = async (req, res, next) => {
   try {
     const listingInfo = await res.locals.db.get(

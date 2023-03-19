@@ -19,6 +19,7 @@ import {
   validateListing,
   uploadListing,
   getListing,
+  getListingV2,
   getOwnedListings,
   getAllListings,
   getPendingListings,
@@ -85,6 +86,7 @@ if (!fs.existsSync(`./${publicFolder}`)) {
     validateListing,
     uploadListing
   );
+  app.get("/v2/listing/:id", getListingV2);
   app.get("/listing/:id", getListing);
 
   app.get("/buyer/:address/:sig", getOwnedListings);
