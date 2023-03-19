@@ -154,10 +154,10 @@ export const HomeView: FC = ({}) => {
               }}>
               Built on Solana
             </h1>
-            <p className="cursive_font text-center pt-10 text-2xl text-white bg-clip-text mb-4 text-left font-light" >
+            <p className="cursive_font text-center pt-10 text-2xl text-white bg-clip-text mb-4 text-left font-light hidden md:block" >
               We support DALL·E, GPT, Midjourney, Stable Diffusion, ChatGPT
             </p>
-            <div className="flex flex-col mt-2">
+            <div className="flex flex-col mt-2 hidden md:block">
               <div className="flex flex-row justify-center">
                 <Link href={"./market"}>
                   <button
