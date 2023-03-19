@@ -6,5 +6,6 @@ import { open } from "sqlite";
     filename: "./db",
     driver: sqlite3.Database,
   });
-  await db.exec("ALTER TABLE images ADD COLUMN cdn TEXT");
+  await db.exec("ALTER TABLE prompts ADD COLUMN views INTEGER DEFAULT 0");
+  await db.exec("ALTER TABLE prompts ADD COLUMN saves INTEGER DEFAULT 0");
 })();

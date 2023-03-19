@@ -154,7 +154,7 @@ export const uploadListing = async (req, res, next) => {
       );
     }
     await res.locals.db.exec(
-      `INSERT INTO prompts VALUES (NULL, "${res.locals.cleaned.listing_pda}", "${res.locals.cleaned.title}", "${res.locals.cleaned.prompt}", "${res.locals.cleaned.instructions}", "${res.locals.cleaned.ai_settings}", "${res.locals.cleaned.signature}", 0, 0, 0, "${res.locals.cleaned.owner}", "${res.locals.cleaned.description}", "${res.locals.cleaned.ai_type}", "${res.locals.cleaned.price}")`
+      `INSERT INTO prompts VALUES (NULL, "${res.locals.cleaned.listing_pda}", "${res.locals.cleaned.title}", "${res.locals.cleaned.prompt}", "${res.locals.cleaned.instructions}", "${res.locals.cleaned.ai_settings}", "${res.locals.cleaned.signature}", 0, 0, 0, "${res.locals.cleaned.owner}", "${res.locals.cleaned.description}", "${res.locals.cleaned.ai_type}", "${res.locals.cleaned.price}", 0, 0)`
     );
 
     res.redirect("https://solprompt.io/pending");
@@ -181,6 +181,14 @@ export const getListingV2 = async (req, res, next) => {
       ...listingInfo,
       images,
     });
+
+    await res.locals.db.run(
+      "UPDATE prompts SET views = ? WHERE id = ?",
+      listingInfo.views + 1,
+      listingInfo.id
+    );
+
+
   } catch (error) {
     res.send("does not exist");
   }
@@ -205,6 +213,7 @@ export const getListing = async (req, res, next) => {
       images: allImages.map((f) => f.filename),
       imageCdns: allImages.map((f) => f.cdn),
     });
+
   } catch (error) {
     res.send("does not exist");
   }
