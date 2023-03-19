@@ -44,14 +44,12 @@ export const DetailView: FC = ({}) => {
 
   const getApi = async (pda) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_SERVER}/listing/${pda}`
+      `${process.env.NEXT_PUBLIC_API_SERVER}/v2/listing/${pda}`
     );
     const json = await response.json();
 
     setImages(json.images);
-    console.log(json)
     setListing(json);
-    console.log(json);
   };
 
   const handleListing = async (program, provider, pda) => {
@@ -107,7 +105,11 @@ export const DetailView: FC = ({}) => {
               {images.map((image, index) => (
                 <div key={`immm-${index}`}>
                   <img
-                    src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${image}`}
+                    src={
+                      image.cdn ?
+                      image.cdn :
+                      `${process.env.NEXT_PUBLIC_API_SERVER}/static/${image}`
+                    }
                   />
                 </div>
               ))}

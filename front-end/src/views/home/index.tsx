@@ -27,7 +27,11 @@ const Listing = (props): JSX.Element => {
         >
           <Image
             alt="idc"
-            src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${images[0].filename}`}
+            src={
+              images[0].cdn ?
+              images[0].cdn :
+              `${process.env.NEXT_PUBLIC_API_SERVER}/static/${images[0].filename}`
+            }
             layout="fill"
             objectFit="cover"
             style={{ borderRadius: 5 }}
