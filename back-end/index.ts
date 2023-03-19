@@ -8,7 +8,13 @@ import fs from "fs";
 import path from "path";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import { createTables, approvePromptsLoop, confirmPromptsLoop, approvedCacheLoop } from "./db-helpers";
+import {
+  imageCdnLoop,
+  createTables,
+  approvePromptsLoop,
+  confirmPromptsLoop,
+  approvedCacheLoop,
+} from "./db-helpers";
 import {
   validateListing,
   uploadListing,
@@ -58,6 +64,7 @@ if (!fs.existsSync(`./${publicFolder}`)) {
 
   await createTables(db);
 
+  imageCdnLoop(db, connection);
   confirmPromptsLoop(db, connection);
   approvePromptsLoop(db, connection);
   approvedCacheLoop(db, memoryCache);

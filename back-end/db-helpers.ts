@@ -1,5 +1,7 @@
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, Keypair } from "@solana/web3.js";
 import * as anchor from "@project-serum/anchor";
+import { ShdwDrive, ShadowFile } from "@shadow-drive/sdk";
+import fs from "fs";
 
 export const getPda = async (programId, seed, inputs) => {
   const [pda, bump] = await anchor.web3.PublicKey.findProgramAddress(
@@ -26,14 +28,54 @@ export const getDynamicPda = async (programId, seed, pub, uint) => {
   return pda;
 };
 
-
 export const createTables = async (db) => {
   await db.exec(
     "CREATE TABLE IF NOT EXISTS prompts(id integer primary key, listing_pda TEXT, title TEXT, prompt TEXT, instructions TEXT, ai_settings TEXT, signature TEXT, confirmed INTEGER, approved INTEGER, tries INTEGER, owner TEXT, description TEXT, ai_type TEXT, price TEXT, UNIQUE(signature))"
   );
   await db.exec(
-    "CREATE TABLE IF NOT EXISTS images(listing_pda TEXT, filename TEXT)"
+    "CREATE TABLE IF NOT EXISTS images(listing_pda TEXT, filename TEXT, cdn TEXT)"
   );
+};
+
+export const imageCdnLoop = async (db, connection) => {
+  try {
+    const result = await db.all(
+      "SELECT filename FROM images WHERE cdn is NULL"
+    );
+
+    let secretKey = Uint8Array.from(JSON.parse(process.env.SHADOW_KEY));
+    let keypair = Keypair.fromSecretKey(secretKey);
+    const wallet = new anchor.Wallet(keypair);
+    const drive = await new ShdwDrive(connection, wallet).init();
+
+    const acctPubkey = new PublicKey(process.env.SHADOW_STORAGE_ACCOUNT);
+
+    for (let i = 0; i < result.length; i++) {
+      try {
+        const fileBuff = fs.readFileSync(`./public/${result[i].filename}`);
+
+        const fileToUpload: ShadowFile = {
+          name: result[i].filename,
+          file: fileBuff,
+        };
+
+        const uploadFile = await drive.uploadFile(acctPubkey, fileToUpload);
+
+        await db.run(
+          "UPDATE images SET cdn = ? WHERE filename = ?",
+          uploadFile.finalized_locations[0],
+          result[i].filename
+        );
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+
+  await new Promise((r) => setTimeout(r, 1000 * 60 * 5));
+  return imageCdnLoop(db, connection);
 };
 
 export const approvedCacheLoop = async (db, memoryCache) => {
@@ -44,7 +86,7 @@ export const approvedCacheLoop = async (db, memoryCache) => {
 
     for (let i = 0; i < result.length; i++) {
       const images = await db.all(
-        "SELECT filename FROM images WHERE listing_pda = ?",
+        "SELECT filename, cdn FROM images WHERE listing_pda = ?",
         result[i].listing_pda
       );
 
@@ -53,7 +95,6 @@ export const approvedCacheLoop = async (db, memoryCache) => {
       delete result[i].instructions;
       delete result[i].prompt;
       delete result[i].ai_settings;
-
     }
 
     memoryCache.approved = result;

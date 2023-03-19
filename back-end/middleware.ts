@@ -99,10 +99,9 @@ export const getOwnedListings = async (req, res, next) => {
       pubKeyUint8
     );
 
-    if(!verified)
-      throw new Error('not verified')
+    if (!verified) throw new Error("not verified");
 
-    console.log('verified', verified);
+    console.log("verified", verified);
 
     const buyer = new PublicKey(req.params.address);
 
@@ -151,7 +150,7 @@ export const uploadListing = async (req, res, next) => {
       await res.locals.db.exec(
         `INSERT INTO images VALUES ("${
           res.locals.cleaned.listing_pda
-        }", "${escape(req.files[i].filename)}")`
+        }", "${escape(req.files[i].filename)}", NULL)`
       );
     }
     await res.locals.db.exec(
@@ -171,7 +170,7 @@ export const getListing = async (req, res, next) => {
       req.params.id
     );
     const allImages = await res.locals.db.all(
-      `SELECT filename FROM images WHERE listing_pda = "${req.params.id}"`
+      `SELECT filename, cdn FROM images WHERE listing_pda = "${req.params.id}"`
     );
 
     delete listingInfo.instructions;
@@ -181,6 +180,7 @@ export const getListing = async (req, res, next) => {
     res.send({
       ...listingInfo,
       images: allImages.map((f) => f.filename),
+      imageCdns: allImages.map((f) => f.cdn),
     });
   } catch (error) {
     res.send("does not exist");
