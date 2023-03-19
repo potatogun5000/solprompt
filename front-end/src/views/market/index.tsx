@@ -6,12 +6,12 @@ import Text from "../../components/Text";
 import b58 from "b58";
 
 const Listing = (props): JSX.Element => {
-  const { images, title, listingPda, aiSettings, price} = props as any;
+  const { views, saves, images, title, listingPda, aiSettings, price, aiType } = props as any;
 
   return (
     <Link
       target="_blank"
-      className="p-1 hover:border-gray-700 border-transparent border-2 hover:border-current pb-2"
+      className="p-1 hover:border-gray-700 border-transparent border-2 hover:border-current pb-5"
       href={`/detail?id=${listingPda}`}>
       <div style={{width: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace:'nowrap', padding:5, fontSize:12, fontWeight: 'bold',  textAlign:'left', marginTop: 5}}>{unescape(title)}</div>
 
@@ -30,10 +30,14 @@ const Listing = (props): JSX.Element => {
           objectFit="cover"
           style={{borderRadius:5}}
         />
+        <div style={{zIndex: 2, fontSize:10,  textTransform: 'uppercase', position: 'absolute', padding: 5, paddingBottom:2, bottom: 0, width: '100%', backgroundColor: '#000000a8', textAlign: 'center'}}>{aiType.replace('_', ' ')}</div>
       </div>
-      <div className="pl-2 pr-2">
-        <div style={{fontSize:12,  float:'left', marginTop: 5, fontWeight: 'normal', textTransform: 'uppercase'}}>Mid Journey</div>
-        <div style={{fontSize:12, fontWeight: 'bold', float:'right', marginTop: 5}}>◎ {price}</div>
+      <div className="pl-2 pr-2 mt-3">
+        <div className="flex flex-row" style={{fontSize:12, fontWeight: 'bold', float:'left'}}>
+          <Image alt="idc" src="/eye.svg" width={15} height={15} style={{filter:'invert(1)'}}/>
+          <div style={{fontSize:12, fontWeight: 'bold', float:'right', paddingTop: 2, paddingLeft: 5}}>{views}</div>
+        </div>
+        <div style={{fontSize:12, fontWeight: 'bold', float:'right', paddingTop: 2}}>{price} SOL</div>
       </div>
     </div>
     </Link>
@@ -68,7 +72,7 @@ export const MarketView: FC = ({}) => {
             style={{ flexWrap: "wrap" }}
           >
             {data.map((item, index) => (
-              <Listing className="flex" images={item.images} title={item.title} listingPda={item.listing_pda} aiSettings={item.ai_settings} price={item.price}/>
+              <Listing className="flex" aiType={item.ai_type} views={item.views} saves={item.saves} images={item.images} title={item.title} listingPda={item.listing_pda} aiSettings={item.ai_settings} price={item.price}/>
             ))}
           </div>
         </div>
