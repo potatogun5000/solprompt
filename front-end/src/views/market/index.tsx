@@ -50,7 +50,7 @@ export const MarketView: FC = ({}) => {
   const getData = async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_SERVER}/listing/approved`);
     const json = await response.json();
-
+    json.sort((a,b)=>b.views-a.views);
     setData(json);
   };
 
