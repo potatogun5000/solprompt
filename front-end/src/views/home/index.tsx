@@ -108,8 +108,9 @@ export const HomeView: FC = ({}) => {
     );
     const json = await response.json();
 
-    console.log(json);
-    setData(json);
+    const show = [json[0], json[2], json[5], json[6], json[7], json[8], json[11], json[13], json[14], json[15], json[18], json[21]]
+    
+    setData(show);
   };
 
   useEffect(() => {
@@ -297,7 +298,7 @@ export const HomeView: FC = ({}) => {
             className="flex flex-row justify-center pt-5"
             style={{ flexWrap: "wrap" }}
           >
-            {data.slice(0, 10).map((item, index) => (
+            {data.slice(0, 12).map((item, index) => (
               <Listing
                 images={item.images}
                 title={item.title}
