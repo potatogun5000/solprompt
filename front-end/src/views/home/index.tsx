@@ -201,6 +201,63 @@ export const HomeView: FC = ({}) => {
             </Carousel>
         </div>
       </div>
+      {/*<div
+        className="flex flex-col"
+        style={{
+          margin: "0 auto",
+          marginTop: 50,
+          width: "100%",
+          maxWidth: 1000,
+        }}
+      >
+        <div className="w-full text-left font-bold">
+          <h1 style={{ textAlign: "center", fontSize: 20, letterSpacing: 1 }}>
+            Categories
+          </h1>
+          <div
+            className="flex flex-row justify-center pt-5"
+            style={{  }}
+          >
+            Anime, Cartoon, Photography, Architecture
+
+          </div>
+        </div>
+      </div>*/}
+
+      <div
+        className="flex flex-col"
+        style={{
+          margin: "0 auto",
+          marginTop: 50,
+          width: "100%",
+          maxWidth: 1000,
+        }}
+      >
+        <div className="w-full text-left font-bold">
+          <h1 style={{ textAlign: "center", fontSize: 20, letterSpacing: 1 }}>
+            <span style={{fontSize:12, color:'purple', marginRight: 10, visibility:'hidden'}}>(view all)</span>
+            Featured
+            <Link href="/market" style={{fontSize:12, marginLeft: 10, color:'#1c86c5'}}>(view all)</Link>
+          </h1>
+          <div
+            className="flex flex-row justify-center pt-5"
+            style={{  }}
+          >
+            {featured.slice(0, 12).map((item, index) => (
+              <Listing
+                images={item.images}
+                title={item.title}
+                listingPda={item.listing_pda}
+                aiSettings={item.ai_settings}
+                price={item.price}
+                aiType={item.ai_type}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+
       <div
         style={{
           width: "100%",
@@ -296,39 +353,6 @@ export const HomeView: FC = ({}) => {
       </div>
 
       </div>
-      <div
-        className="flex flex-col"
-        style={{
-          margin: "0 auto",
-          marginTop: 50,
-          width: "100%",
-          maxWidth: 1000,
-        }}
-      >
-        <div className="w-full text-left font-bold">
-          <h1 style={{ textAlign: "center", fontSize: 20, letterSpacing: 1 }}>
-            <span style={{fontSize:12, color:'purple', marginRight: 10, visibility:'hidden'}}>(view all)</span>
-            Featured
-            <Link href="/market" style={{fontSize:12, marginLeft: 10, color:'#1c86c5'}}>(view all)</Link>
-          </h1>
-          <div
-            className="flex flex-row justify-center pt-5"
-            style={{  }}
-          >
-            {featured.slice(0, 12).map((item, index) => (
-              <Listing
-                images={item.images}
-                title={item.title}
-                listingPda={item.listing_pda}
-                aiSettings={item.ai_settings}
-                price={item.price}
-                aiType={item.ai_type}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
       <div
         className="flex flex-col"
         style={{
