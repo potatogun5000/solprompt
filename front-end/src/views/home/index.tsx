@@ -28,9 +28,9 @@ const Listing = (props): JSX.Element => {
           <Image
             alt="idc"
             src={
-              images[0].cdn ?
-              images[0].cdn :
-              `${process.env.NEXT_PUBLIC_API_SERVER}/static/${images[0].filename}`
+              images[0].cdn
+                ? images[0].cdn
+                : `${process.env.NEXT_PUBLIC_API_SERVER}/static/${images[0].filename}`
             }
             layout="fill"
             objectFit="cover"
@@ -88,6 +88,25 @@ const bgImages = [
   "bg5.png",
 ];
 
+const comicImages = [
+  {
+    img: "https://media.discordapp.net/attachments/1083449288660635760/1087634386826043392/fei_futuristic_comic_purple_and_black_man_writes_on_paper_17058aff-10ce-4827-8f42-5c167a7c6156.png?width=1250&height=714",
+    text: "Craft AI Prompts",
+  },
+  {
+    img: "https://media.discordapp.net/attachments/1083449288660635760/1087635152815013919/fei_futuristic_comic_purple_and_black_man_is_in_a_art_gallery_60f56388-7ba9-463a-ba36-95b613769838.png?width=1253&height=716",
+    text: "List for Sale",
+  },
+  {
+    img: "https://media.discordapp.net/attachments/1083449288660635760/1087633214660677652/fei_futuristic_comic_purple_and_black_man_shakes_hand_e28408d5-f14a-4622-a5d0-b2b63e146cc4.png?width=1250&height=714",
+    text: "Attract Buyers",
+  },
+  {
+    img: "https://media.discordapp.net/attachments/1083449288660635760/1087633117109571594/fei_futuristic_comic_purple_and_black_man_holds_money_f6c9c9f7-26d2-4d1f-94b8-bd9700f87ae8.png?width=1250&height=714",
+    text: "Earn in Sol",
+  },
+];
+
 export const HomeView: FC = ({}) => {
   const [data, setData] = useState([]);
 
@@ -108,8 +127,21 @@ export const HomeView: FC = ({}) => {
     );
     const json = await response.json();
 
-    const show = [json[0], json[2], json[5], json[6], json[7], json[8], json[11], json[13], json[14], json[15], json[18], json[21]]
-    
+    const show = [
+      json[0],
+      json[2],
+      json[5],
+      json[6],
+      json[7],
+      json[8],
+      json[11],
+      json[13],
+      json[14],
+      json[15],
+      json[18],
+      json[21],
+    ];
+
     setData(show);
   };
 
@@ -150,35 +182,17 @@ export const HomeView: FC = ({}) => {
             <h1 className="title_font text-center text-5xl font-bold text-white bg-clip-text mb-1 ">
               Marketplace of the Future
             </h1>
-            <h1 className="cursive_font text-center text-lg ml-1 text-white bg-clip-text mb-4 text-left font-light" style={{
-              textShadow: 'rgb(225 0 176) 3px 2px 0px'
-              }}>
+            <h1
+              className="cursive_font text-center text-lg ml-1 text-white bg-clip-text mb-4 text-left font-light"
+              style={{
+                textShadow: "rgb(225 0 176) 3px 2px 0px",
+              }}
+            >
               Built on Solana
             </h1>
-            <p className="cursive_font text-center pt-10 text-2xl text-white bg-clip-text mb-4 text-left font-light hidden md:block" >
+            <p className="cursive_font text-center pt-10 text-2xl text-white bg-clip-text mb-4 text-left font-light hidden md:block">
               We support DALL·E, GPT, Midjourney, Stable Diffusion, ChatGPT
             </p>
-            <div className="flex flex-col mt-2 hidden md:block">
-              <div className="flex flex-row justify-center">
-                <Link href={"./market"}>
-                  <button
-                    className="px-8 m-2 btn text-black bg-white border-none hover:bg-purple-400"
-                    onClick={() => {}}
-                  >
-                    <span>Purchase a Prompt</span>
-                  </button>
-                </Link>
-                <Link href={"./sell"}>
-                  <button
-                    className="px-8 m-2 btn text-white border-none hover:bg-teal-200"
-                    style={{backgroundColor: '#7075d3'}}
-                    onClick={() => {}}
-                  >
-                    <span>Sell a Prompt</span>
-                  </button>
-                </Link>
-              </div>
-            </div>
           </div>
           {isDesktop ? (
             <Carousel
@@ -220,67 +234,58 @@ export const HomeView: FC = ({}) => {
             </Carousel>
           )}
         </div>
-        {/*<div
+      </div>
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 1000,
+          margin: "0 auto",
+        }}
+      >
+        <h1
           style={{
-            maxWidth: 1200,
-            margin: "0 auto",
-            position: "relative",
-            width: "100%",
-            height: "600px",
             textAlign: "center",
+            fontSize: 20,
+            letterSpacing: 1,
+            marginTop: 30,
+            fontWeight: "bold",
           }}
         >
-          <Image
-            className="tint"
-            src="https://media.discordapp.net/attachments/1083449288660635760/1085900244883099668/polus_cyberpunkbillboard_c13799d8-eaa0-4967-865f-9e2b0736280c.png?width=1224&height=699"
-            objectFit="cover"
-            fill={true}
-            alt="idc"
-          />
+          Earn SOL
+        </h1>
 
-          <div
-            style={{
-              position: "absolute",
-              top: "45%",
-              left: "35%",
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            <h1 className="cursive_font text-left text-lg ml-1 text-white bg-clip-text text-left font-light">
-              The #1 prompt marketplace
-            </h1>
-            <h1 className="title_font text-left text-5xl font-bold text-white bg-clip-text mb-1 text-left">
-              Marketplace of the Future
-            </h1>
-            <h1 className="cursive_font text-left text-lg ml-1 text-white bg-clip-text mb-4 text-left font-light">
-              Built on Solana
-            </h1>
-            <p className="cursive_font text-left pt-10 text-2xl text-white bg-clip-text mb-4 text-left font-light">
-              We support DALL·E, GPT, Midjourney, Stable Diffusion, ChatGPT
-            </p>
-            <div className="flex flex-col mt-2">
-              <div className="flex flex-row justify-center">
-                <Link href={"./market"}>
-                  <button
-                    className="px-8 m-2 btn text-black bg-white border-none"
-                    onClick={() => {}}
-                  >
-                    <span>Purchase a Prompt</span>
-                  </button>
-                </Link>
-                <Link href={"./sell"}>
-                  <button
-                    className="px-8 m-2 btn text-white bg-teal-700 border-none"
-                    onClick={() => {}}
-                  >
-                    <span>Sell a Prompt</span>
-                  </button>
-                </Link>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            marginTop: 20,
+          }}
+        >
+          {comicImages.map((item, index) => (
+            <div style={{ flex: 1, margin: 10 }}>
+              <img
+                src={item.img}
+                style={{ width: "100%", borderTopRightRadius: 10, filter: 'brightness(0.7)'}}
+              />
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: 10,
+                  backgroundColor: "#932bd5",
+                  color: "white",
+                  fontWeight: "bold",
+                  fontSize: 13,
+                  letterSpacing: 1,
+                  borderBottomLeftRadius: 10,
+                }}
+              >
+                {index + 1}. {item.text}
               </div>
             </div>
-          </div>
-        </div>*/}
+          ))}
+        </div>
       </div>
+
       <div
         className="flex flex-col"
         style={{
@@ -291,8 +296,8 @@ export const HomeView: FC = ({}) => {
         }}
       >
         <div className="w-full text-left font-bold">
-          <h1 style={{ textAlign: "center", letterSpacing: 1 }}>
-            Featured Listings
+          <h1 style={{ textAlign: "center", fontSize: 20, letterSpacing: 1 }}>
+            Featured
           </h1>
           <div
             className="flex flex-row justify-center pt-5"
