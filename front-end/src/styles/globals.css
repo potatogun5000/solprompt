@@ -75,3 +75,8 @@ a {
   letter-spacing:-17px;
   text-shadow: -100px 200px 69px rgba(0,0,0,0.2);
 }
+
+
+li {
+  list-style-type: circle;
+}
