@@ -144,6 +144,7 @@ export const HomeView: FC = ({}) => {
               transform: "translate(-50%, -50%)",
               padding: 30,
               paddingTop: 130,
+              textShadow: '0 0 11px black'
             }}
           >
             <h1 className="cursive_font text-center text-lg ml-1 text-white bg-clip-text text-left font-light">
@@ -155,7 +156,7 @@ export const HomeView: FC = ({}) => {
             <h1
               className="cursive_font text-center text-lg ml-1 text-white bg-clip-text mb-4 text-left font-light"
               style={{
-                textShadow: "rgb(225 0 176) 3px 2px 0px",
+                textShadow: "rgb(225 0 176) 3px 2px 5px",
               }}
             >
               Built on Solana
@@ -167,7 +168,7 @@ export const HomeView: FC = ({}) => {
           {isDesktop ? (
             <Carousel
               centerMode={true}
-              centerSlidePercentage={60}
+              centerSlidePercentage={50}
               swipeable={false}
               autoPlay={true}
               infiniteLoop={true}
@@ -176,13 +177,17 @@ export const HomeView: FC = ({}) => {
               useKeyboardArrows={false}
               showStatus={false}
               showIndicators={false}
+              interval={1000*15}
             >
               {bgImages.map((item, index) => (
-                <div key={index}>
-                  <img className="tint" alt="idc" src={item} />
+                <div key={index} style={{height:450, width: '100%', backgroundPosition: 'bottom', backgroundSize: 'cover', backgroundImage: `url("${item}")`, 
+  backgroundColor: 'rgba(0,0,0,.4)',
+  backgroundBlendMode: 'multiply'
+                  }}>
                 </div>
               ))}
             </Carousel>
+
           ) : (
             <Carousel
               centerMode={true}
@@ -195,10 +200,13 @@ export const HomeView: FC = ({}) => {
               useKeyboardArrows={false}
               showStatus={false}
               showIndicators={false}
+              interval={1000*15}
             >
               {bgImages.map((item, index) => (
-                <div key={index}>
-                  <img className="tint" alt="idc" src={item} />
+                <div key={index} style={{height:450, width: '100%', backgroundPosition: 'bottom', backgroundSize: 'cover', backgroundImage: `url("${item}")`, 
+  backgroundColor: 'rgba(128,0,128,0.4)',
+  backgroundBlendMode: 'multiply'
+                  }}>
                 </div>
               ))}
             </Carousel>
@@ -210,8 +218,9 @@ export const HomeView: FC = ({}) => {
           width: "100%",
           maxWidth: 1000,
           margin: "0 auto",
-            display: 'flex',
-            flexDirection: 'row'
+          display: 'flex',
+          flexDirection: 'row',
+          marginTop: 50
         }}
       >
         <div style={{width:'50%', paddingBottom: 40}}>
@@ -240,7 +249,7 @@ export const HomeView: FC = ({}) => {
           style={{
             display: "flex",
             flexDirection: "row",
-            marginTop: 20,
+            paddingTop: 25
           }}
         >
           {comicImages.slice(0,2).map((item, index) => (
@@ -253,7 +262,7 @@ export const HomeView: FC = ({}) => {
                 style={{
                   textAlign: "center",
                   padding: 10,
-                  backgroundColor: "#932bd5",
+                  backgroundColor: "rgb(77 5 122)",
                   color: "white",
                   fontWeight: "bold",
                   fontSize: 13,
@@ -283,7 +292,7 @@ export const HomeView: FC = ({}) => {
                 style={{
                   textAlign: "center",
                   padding: 10,
-                  backgroundColor: "#932bd5",
+                  backgroundColor: "rgb(77 5 122)",
                   color: "white",
                   fontWeight: "bold",
                   fontSize: 13,
@@ -303,7 +312,7 @@ export const HomeView: FC = ({}) => {
         className="flex flex-col"
         style={{
           margin: "0 auto",
-          marginTop: 30,
+          marginTop: 50,
           width: "100%",
           maxWidth: 1000,
         }}
@@ -336,7 +345,7 @@ export const HomeView: FC = ({}) => {
         className="flex flex-col"
         style={{
           margin: "0 auto",
-          marginTop: 30,
+          marginTop: 50,
           width: "100%",
           maxWidth: 1000,
         }}
