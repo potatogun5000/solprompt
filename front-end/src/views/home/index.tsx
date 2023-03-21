@@ -74,14 +74,29 @@ const comicImages = [
   },
 ];
 
+
+const getPercent = width => {
+  if(width > 1700){
+    return 50;
+  }else if(width > 1500) {
+    return 60;
+  }else if(width > 1250) {
+    return 70;
+  }else if(width > 1000) {
+    return 80
+  }else{
+    return 100;
+  }
+}
+
 export const HomeView: FC = ({}) => {
   const [featured, setFeatured] = useState([]);
   const [hottest, setHottest] = useState([]);
 
-  const [isDesktop, setDesktop] = useState(window.innerWidth > 1450);
+  const [isDesktop, setDesktop] = useState(getPercent(window.innerWidth));
 
   const updateMedia = () => {
-    setDesktop(window.innerWidth > 1450);
+    setDesktop(getPercent(window.innerWidth));
   };
 
   useEffect(() => {
@@ -165,33 +180,9 @@ export const HomeView: FC = ({}) => {
               We support DALL·E, GPT, Midjourney, Stable Diffusion, ChatGPT
             </p>
           </div>
-          {isDesktop ? (
             <Carousel
               centerMode={true}
-              centerSlidePercentage={50}
-              swipeable={false}
-              autoPlay={true}
-              infiniteLoop={true}
-              showArrows={false}
-              showThumbs={false}
-              useKeyboardArrows={false}
-              showStatus={false}
-              showIndicators={false}
-              interval={1000*15}
-            >
-              {bgImages.map((item, index) => (
-                <div key={index} style={{height:450, width: '100%', backgroundPosition: 'bottom', backgroundSize: 'cover', backgroundImage: `url("${item}")`, 
-  backgroundColor: 'rgba(0,0,0,.4)',
-  backgroundBlendMode: 'multiply'
-                  }}>
-                </div>
-              ))}
-            </Carousel>
-
-          ) : (
-            <Carousel
-              centerMode={true}
-              centerSlidePercentage={100}
+              centerSlidePercentage={isDesktop}
               swipeable={false}
               autoPlay={true}
               infiniteLoop={true}
@@ -210,7 +201,6 @@ export const HomeView: FC = ({}) => {
                 </div>
               ))}
             </Carousel>
-          )}
         </div>
       </div>
       <div
