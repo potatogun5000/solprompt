@@ -1,11 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Dokdo&family=Italianno&family=Tangerine&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Dokdo&family=Italianno&family=Tangerine&display=swap");
 
 .title_font {
   letter-spacing: 1px;
-  font-family: 'Dokdo', cursive;
+  font-family: "Dokdo", cursive;
 }
 
 .cursive_font {
@@ -15,34 +15,31 @@
   font-size: 13px;
 }
 
-
 .tint {
-   filter: brightness(50%);
+  filter: brightness(50%);
 }
 
 th {
   padding: 10px;
   font-weight: normal !important;
 }
-.table_header{
+.table_header {
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.table_content{
+.table_content {
   font-weight: normal !important;
   font-size: 14px;
 }
-
-
 
 html,
 body {
   padding: 0;
   margin: 0;
   font-family: monospace;
-  background-color: #121418;;
+  background-color: #121418;
 }
 
 a {
@@ -64,18 +61,31 @@ a {
 }
 
 .thi-color {
-  color:#06b7b2;
+  color: #06b7b2;
 }
 
+.bg-tint {
+  background-color: rgba(128, 0, 128, 0.4);
+  background-blend-mode: multiply;
+  animation: mymove 5s infinite;
+  animation-direction: alternate;
+}
 
+@keyframes mymove {
+  from {
+  background-color: rgba(128, 0, 128, 0.4);
+  }
+  to {
+  background-color: rgb(127, 0, 255, 0.4);
+  }
+}
 
-.shadow{
+.shadow {
   font-weight: 100;
   font-size: 33px;
-  letter-spacing:-17px;
-  text-shadow: -100px 200px 69px rgba(0,0,0,0.2);
+  letter-spacing: -17px;
+  text-shadow: -100px 200px 69px rgba(0, 0, 0, 0.2);
 }
-
 
 li {
   list-style-type: circle;

@@ -194,10 +194,8 @@ export const HomeView: FC = ({}) => {
               interval={1000*15}
             >
               {bgImages.map((item, index) => (
-                <div key={index} style={{height:450, width: '100%', backgroundPosition: 'bottom', backgroundSize: 'cover', backgroundImage: `url("${item}")`, 
-  backgroundColor: 'rgba(128,0,128,0.4)',
-  backgroundBlendMode: 'multiply'
-                  }}>
+                <div className="bg-tint" key={index} style={{height:450, width: '100%', backgroundPosition: 'bottom', backgroundSize: 'cover', backgroundImage: `url("${item}")`
+                 }}>
                 </div>
               ))}
             </Carousel>
