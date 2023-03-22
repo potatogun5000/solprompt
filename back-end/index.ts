@@ -22,6 +22,7 @@ import {
   getListingV2,
   getOwnedListings,
   getAllListings,
+  uploadScrapedListing,
   getPendingListings,
   requireAdmin,
   setLocals,
@@ -81,11 +82,17 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   app.get("/listing/pending", requireAdmin, getPendingListings);
   app.get("/listing/approved", getApprovedListings);
   app.post(
+    "/listing/scraped",
+    requireAdmin,
+    uploadScrapedListing
+  );
+  app.post(
     "/listing",
     upload.array("photos", 10),
     validateListing,
     uploadListing
   );
+
   app.get("/v2/listing/:id", getListingV2);
   app.get("/listing/:id", getListing);
 

@@ -144,6 +144,33 @@ export const getOwnedListings = async (req, res, next) => {
   }
 };
 
+export const uploadScrapedListing = async (req, res, next) => {
+  try {
+    const { cdns, uuid, title, prompt, instructions, ai_settings, ai_type } =
+      req.body;
+
+    for (let i = 0; i < 4; i++) {
+      await res.locals.db.exec(
+        `INSERT INTO images VALUES ("${uuid}", null, "${cdns[i]}")`
+      );
+    }
+
+    const aiSettings = b58.encode(Buffer.from(ai_settings));
+
+    await res.locals.db.exec(
+      `INSERT INTO s_prompts VALUES (NULL, "${uuid}", "${escape(title)}", "${escape(
+        prompt
+      )}", "${escape(
+        instructions
+      )}", "${aiSettings}", "${uuid}", 1, 1, 0, "SOL_PROMPT", "FREE", "${ai_type}", "0", 0, 0)`
+    );
+
+    res.send("done");
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const uploadListing = async (req, res, next) => {
   try {
     for (let i = 0; i < req.files.length; i++) {
@@ -187,8 +214,6 @@ export const getListingV2 = async (req, res, next) => {
       listingInfo.views + 1,
       listingInfo.id
     );
-
-
   } catch (error) {
     res.send("does not exist");
   }
@@ -213,7 +238,6 @@ export const getListing = async (req, res, next) => {
       images: allImages.map((f) => f.filename),
       imageCdns: allImages.map((f) => f.cdn),
     });
-
   } catch (error) {
     res.send("does not exist");
   }
