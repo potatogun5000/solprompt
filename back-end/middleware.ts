@@ -144,6 +144,25 @@ export const getOwnedListings = async (req, res, next) => {
   }
 };
 
+export const doesExist = async (req, res, next) => {
+  try {
+    const result = await res.locals.db.get(
+      "SELECT listing_pda FROM s_prompts WHERE listing_pda = ?",
+      req.params.id
+    );
+
+    if (result) {
+      return res.send({
+        exist: true,
+      });
+    }
+  } catch (error) {}
+
+  res.send({
+    exist: false,
+  });
+};
+
 export const uploadScrapedListing = async (req, res, next) => {
   try {
     const { cdns, uuid, title, prompt, instructions, ai_settings, ai_type } =
@@ -158,9 +177,9 @@ export const uploadScrapedListing = async (req, res, next) => {
     const aiSettings = b58.encode(Buffer.from(ai_settings));
 
     await res.locals.db.exec(
-      `INSERT INTO s_prompts VALUES (NULL, "${uuid}", "${escape(title)}", "${escape(
-        prompt
-      )}", "${escape(
+      `INSERT INTO s_prompts VALUES (NULL, "${uuid}", "${escape(
+        title
+      )}", "${escape(prompt)}", "${escape(
         instructions
       )}", "${aiSettings}", "${uuid}", 1, 1, 0, "SOL_PROMPT", "FREE", "${ai_type}", "0", 0, 0)`
     );

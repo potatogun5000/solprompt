@@ -18,6 +18,7 @@ import {
 import {
   validateListing,
   uploadListing,
+  doesExist,
   getListing,
   getListingV2,
   getOwnedListings,
@@ -77,9 +78,9 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   app.use(setLocals(db, memoryCache, connection));
 
   app.get("/hello", (req, res, next) => res.send("henlo"));
-
   app.get("/listing/all", requireAdmin, getAllListings);
   app.get("/listing/pending", requireAdmin, getPendingListings);
+  app.get("/listing/:id/exist", requireAdmin, doesExist);
   app.get("/listing/approved", getApprovedListings);
   app.post(
     "/listing/scraped",
