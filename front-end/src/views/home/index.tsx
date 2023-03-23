@@ -57,19 +57,19 @@ const bgImages = [
 
 const comicImages = [
   {
-    img: "https://media.discordapp.net/attachments/1083449288660635760/1087634386826043392/fei_futuristic_comic_purple_and_black_man_writes_on_paper_17058aff-10ce-4827-8f42-5c167a7c6156.png?width=1250&height=714",
+    img: "comic0.png",
     text: "Craft AI Prompts",
   },
   {
-    img: "https://media.discordapp.net/attachments/1083449288660635760/1087635152815013919/fei_futuristic_comic_purple_and_black_man_is_in_a_art_gallery_60f56388-7ba9-463a-ba36-95b613769838.png?width=1253&height=716",
+    img: "comic1.png",
     text: "List for Sale",
   },
   {
-    img: "https://media.discordapp.net/attachments/1083449288660635760/1087633214660677652/fei_futuristic_comic_purple_and_black_man_shakes_hand_e28408d5-f14a-4622-a5d0-b2b63e146cc4.png?width=1250&height=714",
+    img: "comic2.png",
     text: "Attract Buyers",
   },
   {
-    img: "https://media.discordapp.net/attachments/1083449288660635760/1087633117109571594/fei_futuristic_comic_purple_and_black_man_holds_money_f6c9c9f7-26d2-4d1f-94b8-bd9700f87ae8.png?width=1250&height=714",
+    img: "comic3.png",
     text: "Earn in Sol",
   },
 ];
