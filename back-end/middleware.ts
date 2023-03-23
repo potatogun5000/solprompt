@@ -219,9 +219,9 @@ export const getListingV2 = async (req, res, next) => {
   }
 };
 
+/*
 export const getAllListings = async (req, res, next) => {
   try {
-    /*
     const listingInfo = await res.locals.db.get(
       "SELECT * FROM prompts WHERE listing_pda = ? AND approved = 1",
       req.params.id
@@ -238,11 +238,12 @@ export const getAllListings = async (req, res, next) => {
       ...listingInfo,
       images: allImages.map((f) => f.filename),
       imageCdns: allImages.map((f) => f.cdn),
-    });*/
+    });
   } catch (error) {
     res.send("does not exist");
   }
 };
+*/
 
 export const getListing = async (req, res, next) => {
   try {
