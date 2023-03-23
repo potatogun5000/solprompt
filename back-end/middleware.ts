@@ -238,6 +238,37 @@ export const getListingV2 = async (req, res, next) => {
   }
 };
 
+export const fetchPrompts = async (req, res, next) => {
+  try {
+    let offset = 0;
+
+    if (req.query.offset) offset = parseInt(req.query.offset);
+
+    const rows = await res.locals.db.all(
+      "SELECT title, listing_pda, price, ai_type, views, saves, description, owner  FROM s_prompts ORDER BY views LIMIT ? OFFSET ?",
+      50,
+      offset
+    );
+
+    res.send(rows);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const fetchRandomPrompts = async (req, res, next) => {
+  try {
+    const rows = await res.locals.db.all(
+      "SELECT title, listing_pda, price, ai_type, views, saves, description, owner FROM s_prompts WHERE tries = 0 ORDER BY RANDOM() LIMIT 10"
+    );
+
+    res.send(rows);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 /*
 export const getAllListings = async (req, res, next) => {
   try {

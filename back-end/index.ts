@@ -20,6 +20,7 @@ import {
   uploadListing,
   doesExist,
   getListing,
+  fetchPrompts,
   getListingV2,
   getOwnedListings,
   getAllListings,
@@ -29,6 +30,7 @@ import {
   setLocals,
   errorHandler,
   getApprovedListings,
+  fetchRandomPrompts
 } from "./middleware";
 import { Connection } from "@solana/web3.js";
 import cors from "cors";
@@ -93,6 +95,8 @@ if (!fs.existsSync(`./${publicFolder}`)) {
     validateListing,
     uploadListing
   );
+  app.get("/prompts/random", requireAdmin, fetchRandomPrompts);
+  app.get("/prompts", fetchPrompts);
 
   app.get("/v2/listing/:id", getListingV2);
   app.get("/listing/:id", getListing);
