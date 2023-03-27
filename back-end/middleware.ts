@@ -181,7 +181,7 @@ export const uploadScrapedListing = async (req, res, next) => {
         title
       )}", "${escape(prompt)}", "${escape(
         instructions
-      )}", "${aiSettings}", "${uuid}", 1, 1, 0, "SOL_PROMPT", "FREE", "${ai_type}", "0", 0, 0)`
+      )}", "${aiSettings}", "${uuid}", 1, 1, 0, "SOL_PROMPT", "FREE", "${ai_type}", "0", 0, 0, NULL, 1)`
     );
 
     res.send("done");
@@ -200,7 +200,7 @@ export const uploadListing = async (req, res, next) => {
       );
     }
     await res.locals.db.exec(
-      `INSERT INTO prompts VALUES (NULL, "${res.locals.cleaned.listing_pda}", "${res.locals.cleaned.title}", "${res.locals.cleaned.prompt}", "${res.locals.cleaned.instructions}", "${res.locals.cleaned.ai_settings}", "${res.locals.cleaned.signature}", 0, 0, 0, "${res.locals.cleaned.owner}", "${res.locals.cleaned.description}", "${res.locals.cleaned.ai_type}", "${res.locals.cleaned.price}", 0, 0)`
+      `INSERT INTO prompts VALUES (NULL, "${res.locals.cleaned.listing_pda}", "${res.locals.cleaned.title}", "${res.locals.cleaned.prompt}", "${res.locals.cleaned.instructions}", "${res.locals.cleaned.ai_settings}", "${res.locals.cleaned.signature}", 0, 0, 0, "${res.locals.cleaned.owner}", "${res.locals.cleaned.description}", "${res.locals.cleaned.ai_type}", "${res.locals.cleaned.price}", 0, 0, NULL, 0)`
     );
 
     res.redirect("https://solprompt.io/pending");
@@ -241,16 +241,29 @@ export const getListingV2 = async (req, res, next) => {
 export const fetchPrompts = async (req, res, next) => {
   try {
     let offset = 0;
-
     if (req.query.offset) offset = parseInt(req.query.offset);
 
+    let sort = "views";
+    if (req.query.sort === "newest") {
+      sort = "id";
+    }
+
     const rows = await res.locals.db.all(
-      "SELECT title, listing_pda, price, ai_type, views, saves, description, owner  FROM s_prompts ORDER BY views LIMIT ? OFFSET ?",
-      50,
+      "SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM s_prompts ORDER BY ? LIMIT ? OFFSET ?",
+      sort,
+      25,
       offset
     );
 
-    res.send(rows);
+    const count = await res.locals.db.get(
+      "SELECT COUNT(*) FROM s_prompts ORDER BY ?",
+      sort,
+    );
+
+    res.send({
+      rows,
+      count: count['COUNT(*)']
+    });
   } catch (error) {
     next(error);
   }
@@ -268,6 +281,7 @@ export const fetchRandomPrompts = async (req, res, next) => {
     next(error);
   }
 };
+
 
 /*
 export const getAllListings = async (req, res, next) => {
