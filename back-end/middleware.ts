@@ -147,7 +147,7 @@ export const getOwnedListings = async (req, res, next) => {
 export const doesExist = async (req, res, next) => {
   try {
     const result = await res.locals.db.get(
-      "SELECT listing_pda FROM s_prompts WHERE listing_pda = ?",
+      "SELECT listing_pda FROM prompts WHERE listing_pda = ?",
       req.params.id
     );
 
@@ -177,7 +177,7 @@ export const uploadScrapedListing = async (req, res, next) => {
     const aiSettings = b58.encode(Buffer.from(ai_settings));
 
     await res.locals.db.exec(
-      `INSERT INTO s_prompts VALUES (NULL, "${uuid}", "${escape(
+      `INSERT INTO prompts VALUES (NULL, "${uuid}", "${escape(
         title
       )}", "${escape(prompt)}", "${escape(
         instructions
@@ -249,14 +249,14 @@ export const fetchPrompts = async (req, res, next) => {
     }
 
     const rows = await res.locals.db.all(
-      "SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM s_prompts ORDER BY ? LIMIT ? OFFSET ?",
+      "SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM prompts ORDER BY ? LIMIT ? OFFSET ?",
       sort,
       25,
       offset
     );
 
     const count = await res.locals.db.get(
-      "SELECT COUNT(*) FROM s_prompts ORDER BY ?",
+      "SELECT COUNT(*) FROM prompts ORDER BY ?",
       sort,
     );
 
@@ -272,7 +272,7 @@ export const fetchPrompts = async (req, res, next) => {
 export const fetchRandomPrompts = async (req, res, next) => {
   try {
     const rows = await res.locals.db.all(
-      "SELECT title, listing_pda, price, ai_type, views, saves, description, owner FROM s_prompts WHERE tries = 0 ORDER BY RANDOM() LIMIT 10"
+      "SELECT title, listing_pda, price, ai_type, views, saves, description, owner FROM prompts WHERE tries = 0 ORDER BY RANDOM() LIMIT 10"
     );
 
     res.send(rows);
