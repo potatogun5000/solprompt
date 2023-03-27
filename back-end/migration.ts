@@ -6,11 +6,44 @@ import { open } from "sqlite";
     filename: "./db",
     driver: sqlite3.Database,
   });
-  await db.exec("ALTER TABLE s_prompts ADD COLUMN thumbnail TEXT");
-  await db.exec("ALTER TABLE s_prompts ADD COLUMN scraped INTEGER");
 
-  await db.exec("ALTER TABLE prompts ADD COLUMN thumbnail TEXT");
-  await db.exec("ALTER TABLE prompts ADD COLUMN scraped INTEGER");
+  //move all s_prompts into prompts with scraped = 1
+
+  /*
+    await db.exec(
+    "CREATE TABLE IF NOT EXISTS s_prompts(id integer primary key, listing_pda TEXT, title TEXT, prompt TEXT, instructions TEXT, ai_settings TEXT, signature TEXT, confirmed INTEGER, approved INTEGER, tries INTEGER, owner TEXT, description TEXT, ai_type TEXT, price TEXT, views INTEGER, saves INTEGER, thumbnail TEXT, scraped INTEGER, UNIQUE(signature))"
+  );*/
+
+  const rows = await db.all("SELECT * FROM s_prompts");
+
+  for (let i = 0; i < rows.length; i++) {
+    const {
+      listing_pda,
+      title,
+      prompt,
+      instructions,
+      ai_settings,
+      signature,
+      confirmed,
+      approved,
+      tries,
+      owner,
+      description,
+      ai_type,
+      price,
+      views,
+      saves,
+      thumbnail,
+      scraped,
+    } = rows[i];
+
+    await db.exec(
+      `INSERT INTO prompts VALUES (NULL, "${listing_pda}", "${title}", "${prompt}", "${instructions}", "${ai_settings}", "${signature}", 1, 1, 0, "${owner}", "${description}", "${ai_type}", "${price}", 0, 0, NULL, 1)`
+    );
+    console.log(i);
+  }
+
+
   /*
   let done = true;
   let offset = 0;

@@ -112,8 +112,10 @@ export const approvedCacheLoop = async (db, memoryCache) => {
 export const approvePromptsLoop = async (db, connection) => {
   try {
     const result = await db.all(
-      "SELECT * FROM prompts WHERE approved = 0 AND confirmed = 1"
+      "SELECT * FROM prompts WHERE approved = 0 AND confirmed = 1 AND scraped IS NULL"
     );
+
+    console.log(result.length)
 
     for (let i = 0; i < result.length; i++) {
       try {
