@@ -85,7 +85,7 @@ export const imageCdnLoop = async (db, connection) => {
 export const approvedCacheLoop = async (db, memoryCache) => {
   try {
     const result = await db.all(
-      "SELECT * FROM prompts WHERE approved = 1 AND confirmed = 1"
+      "SELECT * FROM prompts WHERE approved = 1 AND confirmed = 1 AND scraped is NULL"
     );
 
     for (let i = 0; i < result.length; i++) {
@@ -112,7 +112,7 @@ export const approvedCacheLoop = async (db, memoryCache) => {
 export const approvePromptsLoop = async (db, connection) => {
   try {
     const result = await db.all(
-      "SELECT * FROM prompts WHERE approved = 0 AND confirmed = 1 AND scraped IS NULL"
+      "SELECT * FROM prompts WHERE approved = 0 AND confirmed = 1"
     );
 
     console.log(result.length)
