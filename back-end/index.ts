@@ -14,6 +14,7 @@ import {
   approvePromptsLoop,
   confirmPromptsLoop,
   approvedCacheLoop,
+  thumbnailLoop
 } from "./db-helpers";
 import {
   validateListing,
@@ -30,7 +31,7 @@ import {
   setLocals,
   errorHandler,
   getApprovedListings,
-  fetchRandomPrompts
+  fetchRandomPrompts,
 } from "./middleware";
 import { Connection } from "@solana/web3.js";
 import cors from "cors";
@@ -73,6 +74,7 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   confirmPromptsLoop(db, connection);
   approvePromptsLoop(db, connection);
   approvedCacheLoop(db, memoryCache);
+  thumbnailLoop(db, connection);
 
   app.use(cors());
   app.use("/static", express.static(publicFolder));
