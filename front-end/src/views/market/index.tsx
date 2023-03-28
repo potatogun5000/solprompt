@@ -187,7 +187,7 @@ export const MarketView: FC = ({}) => {
   }, []);
 
   return (
-    <div className="md:hero mx-auto p-4">
+    <div className="p-4">
       <div className="flex flex-col">
         <HeaderM>
           Marketplace
