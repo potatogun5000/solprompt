@@ -154,15 +154,11 @@ export const MarketView: FC = ({}) => {
 
   useEffect( () => {
     getPromps(currentPage);
-  }, [sort, aiType])
+  }, [sort])
 
   useEffect( () => {
-    setCurrentPage(0);
+    getPromps(0);
   }, [aiType])
-
-  const setLastPage = () => {
-    setCurrentPage(Math.floor((totalItems/ITEM_LIMIT)))
-  }
 
   const getPromps = async(page:number) => {
     let aiTypeStr = '';
@@ -172,7 +168,7 @@ export const MarketView: FC = ({}) => {
       aiTypeStr = '&filter=stable_diffusion';
 
 
-    const reqUrl = `${process.env.NEXT_PUBLIC_API_SERVER}/prompts?offset=${currentPage*ITEM_LIMIT}&sort=${sort}${aiTypeStr}`;
+    const reqUrl = `${process.env.NEXT_PUBLIC_API_SERVER}/prompts?offset=${page*ITEM_LIMIT}&sort=${sort}${aiTypeStr}`;
 
     console.log(reqUrl);
     const response = await fetch(
@@ -181,22 +177,10 @@ export const MarketView: FC = ({}) => {
     const json = await response.json();
 
 
-    setData(json.rows);
     setCurrentPage(page);
+    setData(json.rows);
     setTotalItems(json.count);
   }
-
-  const getData = async () => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_SERVER}/prompts?sort=${sort}`
-    );
-    const json = await response.json();
-    console.log(json);
-
-    setTotalItems(json.count)
-    setData(json.rows);
-    setCurrentPage(0);
-  };
 
   useEffect(() => {
     getPromps(0);
