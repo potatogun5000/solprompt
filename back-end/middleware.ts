@@ -248,21 +248,31 @@ export const fetchPrompts = async (req, res, next) => {
       sort = "id";
     }
 
+    let filterAi: string = " ";
+    switch (req.query.filter) {
+      case "mid_journey":
+        filterAi = ' AND ai_type = "mid_journey" ';
+        break;
+      case "stable_diffusion":
+        filterAi = ' AND ai_type = "stable_diffusion" ';
+        break;
+      default:
+        filterAi = " ";
+    }
+
     const rows = await res.locals.db.all(
-      "SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM prompts ORDER BY ? LIMIT ? OFFSET ?",
-      sort,
+      `SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM prompts WHERE thumbnail IS NOT NULL${filterAi}ORDER BY ${sort} DESC LIMIT ? OFFSET ?`,
       25,
       offset
     );
 
     const count = await res.locals.db.get(
-      "SELECT COUNT(*) FROM prompts ORDER BY ?",
-      sort,
+      `SELECT COUNT(*) FROM prompts WHERE thumbnail IS NOT NULL${filterAi}`
     );
 
     res.send({
       rows,
-      count: count['COUNT(*)']
+      count: count["COUNT(*)"],
     });
   } catch (error) {
     next(error);
@@ -281,7 +291,6 @@ export const fetchRandomPrompts = async (req, res, next) => {
     next(error);
   }
 };
-
 
 /*
 export const getAllListings = async (req, res, next) => {

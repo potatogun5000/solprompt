@@ -155,22 +155,8 @@ export const imageCdnLoop = async (db, connection) => {
 export const approvedCacheLoop = async (db, memoryCache) => {
   try {
     const result = await db.all(
-      "SELECT * FROM prompts WHERE approved = 1 AND confirmed = 1 AND scraped is NULL"
+      "SELECT * FROM prompts WHERE approved = 1 AND confirmed = 1 AND scraped is NULL AND thumbnail IS NOT NULL"
     );
-
-    /*
-    for (let i = 0; i < result.length; i++) {
-      const images = await db.all(
-        "SELECT filename, cdn FROM images WHERE listing_pda = ?",
-        result[i].listing_pda
-      );
-
-      result[i].images = images;
-
-      delete result[i].instructions;
-      delete result[i].prompt;
-      delete result[i].ai_settings;
-    }*/
 
     memoryCache.approved = result;
   } catch (error) {

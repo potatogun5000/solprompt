@@ -19,6 +19,8 @@
   filter: brightness(50%);
 }
 
+
+
 th {
   padding: 10px;
   font-weight: normal !important;
@@ -47,6 +49,21 @@ a {
   text-decoration: none;
 }
 
+.h_radio{
+  margin-bottom:15px;
+  margin-top:15px;
+}
+
+.i_radio{
+  margin: 5px;
+}
+
+.l_radio{
+  padding: 5px;
+  font-weight: 'normal';
+  font-size:12px;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -63,6 +80,56 @@ a {
 .thi-color {
   color: #06b7b2;
 }
+
+.radio_item {
+  border: 1px solid grey;
+  border-radius: 5px;
+  margin-top: 5px;
+  padding: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.radio_item.active{
+  background-color: rgb(77, 5, 122);
+  border-color: white;
+  color: 'black';
+}
+
+.radio_item.disabled{
+  cursor: not-allowed;
+  color: grey;
+}
+
+
+.page {
+  width: 60px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  margin-top: 5px;
+  padding: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.page.active {
+  background-color: purple;
+}
+
+.no-border {
+  border: none;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.page-disable {
+  color: grey;
+  border-color: grey;
+  cursor: not-allowed;
+}
+
 
 .bg-tint {
   background-color: rgba(128, 0, 128, 0.4);
@@ -90,3 +157,58 @@ a {
 li {
   list-style-type: circle;
 }
+
+
+.ribbon {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  position: absolute;
+  z-index: 10;
+}
+.ribbon::before,
+.ribbon::after {
+  position: absolute;
+  z-index: -1;
+  content: '';
+  display: block;
+  border: 5px solid #2980b9;
+}
+.ribbon span {
+  position: absolute;
+  display: block;
+  width: 225px;
+  padding: 2px 0;
+  background-color: #3498db;
+  box-shadow: 0 5px 10px rgba(0,0,0,.1);
+  color: #fff;
+  font-size:11px;
+  text-shadow: 0 1px 1px rgba(0,0,0,.2);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* top right*/
+.ribbon-top-right {
+  top: -10px;
+  right: -10px;
+}
+.ribbon-top-right::before,
+.ribbon-top-right::after {
+  border-top-color: transparent;
+  border-right-color: transparent;
+}
+.ribbon-top-right::before {
+  top: 0;
+  left: 0;
+}
+.ribbon-top-right::after {
+  bottom: 0;
+  right: 0;
+}
+.ribbon-top-right span {
+  left: -57px;
+  top: 31px;
+  transform: rotate(45deg);
+}
+

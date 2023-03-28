@@ -9,12 +9,12 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import { Carousel } from "react-responsive-carousel";
 
 const Listing = (props): JSX.Element => {
-  const { images, title, listingPda, aiSettings, price, aiType } = props as any;
+  const { title, thumbnail, listingPda, aiSettings, price, aiType } = props as any;
 
   return (
     <Link
       className="hover:border-gray-700 border-transparent border-2 hover:border-current"
-      href={`/detail?id=${listingPda}`}
+      href={`/promps?id=${listingPda}`}
       style={{margin: 10}}
     >
       <div style={{ width: "100%" }}>
@@ -28,9 +28,7 @@ const Listing = (props): JSX.Element => {
           <Image
             alt="idc"
             src={
-              images[0].cdn
-                ? images[0].cdn
-                : `${process.env.NEXT_PUBLIC_API_SERVER}/static/${images[0].filename}`
+              thumbnail
             }
             layout="fill"
             objectFit="cover"
@@ -245,7 +243,7 @@ export const HomeView: FC = ({}) => {
           >
             {featured.slice(0, 12).map((item, index) => (
               <Listing
-                images={item.images}
+                thumbnail={item.thumbnail}
                 title={item.title}
                 listingPda={item.listing_pda}
                 aiSettings={item.ai_settings}
@@ -374,7 +372,7 @@ export const HomeView: FC = ({}) => {
           >
             {hottest.slice(0, 12).map((item, index) => (
               <Listing
-                images={item.images}
+                thumbnail={item.thumbnail}
                 title={item.title}
                 listingPda={item.listing_pda}
                 aiSettings={item.ai_settings}
