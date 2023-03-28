@@ -38,10 +38,6 @@ export const createTables = async (db) => {
     "CREATE TABLE IF NOT EXISTS prompts(id integer primary key, listing_pda TEXT, title TEXT, prompt TEXT, instructions TEXT, ai_settings TEXT, signature TEXT, confirmed INTEGER, approved INTEGER, tries INTEGER, owner TEXT, description TEXT, ai_type TEXT, price TEXT, views INTEGER, saves INTEGER, thumbnail TEXT, scraped INTEGER, UNIQUE(signature))"
   );
   await db.exec(
-    "CREATE TABLE IF NOT EXISTS s_prompts(id integer primary key, listing_pda TEXT, title TEXT, prompt TEXT, instructions TEXT, ai_settings TEXT, signature TEXT, confirmed INTEGER, approved INTEGER, tries INTEGER, owner TEXT, description TEXT, ai_type TEXT, price TEXT, views INTEGER, saves INTEGER, thumbnail TEXT, scraped INTEGER, UNIQUE(signature))"
-  );
-
-  await db.exec(
     "CREATE TABLE IF NOT EXISTS images(listing_pda TEXT, filename TEXT, cdn TEXT)"
   );
 };
@@ -87,7 +83,7 @@ export const thumbnailLoop = async (db, connection) => {
           .toBuffer();
 
         const fileToUpload: ShadowFile = {
-          name: "dog.jpg",
+          name: `${listing_pda}-thumbnail.jpg`,
           file: buffer,
         };
 
@@ -162,6 +158,7 @@ export const approvedCacheLoop = async (db, memoryCache) => {
       "SELECT * FROM prompts WHERE approved = 1 AND confirmed = 1 AND scraped is NULL"
     );
 
+    /*
     for (let i = 0; i < result.length; i++) {
       const images = await db.all(
         "SELECT filename, cdn FROM images WHERE listing_pda = ?",
@@ -173,7 +170,7 @@ export const approvedCacheLoop = async (db, memoryCache) => {
       delete result[i].instructions;
       delete result[i].prompt;
       delete result[i].ai_settings;
-    }
+    }*/
 
     memoryCache.approved = result;
   } catch (error) {
