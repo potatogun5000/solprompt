@@ -41,7 +41,6 @@ const Listing = (props): JSX.Element => {
           />
           <div
             style={{
-              color: "black",
               position: "absolute",
               zIndex: 2,
               textAlign: "center",
@@ -194,8 +193,7 @@ export const MarketView: FC = ({}) => {
     const json = await response.json();
     console.log(json);
 
-    totalItems.current = json.count;
-
+    setTotalItems(json.count)
     setData(json.rows);
     setCurrentPage(0);
   };
@@ -225,7 +223,6 @@ export const MarketView: FC = ({}) => {
                 </div>
                 <div
                   onClick={() => setSort("newest")}
-                  className="radio_item"
                   className={`radio_item ${sort === "newest" && "active"}`}
                 >
                   Newest
