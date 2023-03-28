@@ -4,6 +4,63 @@ import Image from "next/image";
 import pkg from "../../../package.json";
 import Text from "../../components/Text";
 import b58 from "b58";
+import styled from 'styled-components';
+
+const HeaderM = styled.div`
+  font-size: 25px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  margin-left: 155px;
+`;
+
+const ListingCard = styled.div`
+  width: 250px;
+  height: 390px;
+  margin-right: 10px;
+  background-color: #0a0a0a;
+  padding-top: 20px;
+  border-radius: 15px;
+
+  .image-holder{
+    width: 210px;
+    height: 230px;
+    position: relative;
+    margin: 0 auto;
+  }
+  .text-holder {
+    padding: 20px;
+  }
+
+  .title-header{
+    height: 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 13px;
+  }
+
+  .price-header{
+    margin-top: 2px;
+    font-size: 12px;
+    color: #8c82ff;
+  }
+
+  .grey {
+    color: grey;
+  }
+
+  .cap {
+    text-transform: capitalize;
+  }
+
+  hr{
+        height: 1px;
+        background-color: #545454;
+        border: none;
+        margin-top:10px;
+        margin-bottom: 10px;
+  }
+`;
 
 const Listing = (props): JSX.Element => {
   const {
@@ -20,88 +77,31 @@ const Listing = (props): JSX.Element => {
   return (
     <Link
       target="_blank"
-      className="p-1 hover:border-gray-700 border-transparent border-2 hover:border-current pb-5"
+      className="p-1"
       href={`/detail?id=${listingPda}`}
     >
-      <div style={{ width: 150, marginRight: 10 }}>
-        <div
-          style={{
-            width: "100%",
-            height: 160,
-            position: "relative",
-          }}
-        >
+      <ListingCard>
+        <div className="image-holder">
           <Image
             key={thumbnail}
             alt="idc"
             src={thumbnail}
             layout="fill"
             objectFit="cover"
-            style={{ borderRadius: 5 }}
+            style={{ borderRadius: 15 }}
           />
-          <div
-            style={{
-              position: "absolute",
-              zIndex: 2,
-              textAlign: "center",
-              width: "100%",
-              top: 5,
-              fontSize: 11,
-              color: "white",
-              textShadow: "0 0 15px black, 0 0 15px black, 0 0 15px black",
-            }}
-          ></div>
-
-          <div
-            style={{
-              zIndex: 2,
-              fontSize: 10,
-              textTransform: "uppercase",
-              position: "absolute",
-              padding: 5,
-              paddingBottom: 2,
-              bottom: 0,
-              width: "100%",
-              backgroundColor: "#000000a8",
-              textAlign: "center",
-            }}
-          >
-            <div
-              className="flex flex-row"
-              style={{ fontSize: 12, fontWeight: "bold", float: "left" }}
-            >
-              <Image
-                alt="idc"
-                src="/eye.svg"
-                width={11}
-                height={11}
-                style={{ filter: "invert(1)" }}
-              />
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: "bold",
-                  float: "right",
-                  paddingTop: 2,
-                  paddingLeft: 5,
-                }}
-              >
-                {views}
-              </div>
-            </div>
-            <div
-              style={{
-                fontSize: 11,
-                fontWeight: "bold",
-                float: "right",
-                paddingTop: 2,
-              }}
-            >
-              {price === "0" ? "FREE" : `${price} SOL`}
-            </div>
+        </div>
+        <div className="text-holder">
+          <h1 className="title-header">{unescape(title)}</h1>
+          <h1 className="price-header cap">{aiType.split('_').join(' ')} <span className="grey"></span></h1>
+          <h1 className="price-header"><span className="grey">price: </span> {price} SOL</h1>
+          <hr/>
+          <div className="flex flex-row justify-between text-sm grey">
+            <h1></h1>
+            <h1>{views} views</h1>
           </div>
         </div>
-      </div>
+      </ListingCard>
     </Link>
   );
 };
@@ -188,38 +188,36 @@ export const MarketView: FC = ({}) => {
 
   return (
     <div className="md:hero mx-auto p-4">
-      <div className="md:hero-content flex flex-col">
-        <div className="mt-6">
-          <h1 className="text-center text-4xl font-bold text-white bg-clip-text mb-4">
-            Marketplace
-          </h1>
-        </div>
+      <div className="flex flex-col">
+        <HeaderM>
+          Marketplace
+        </HeaderM>
         <div className="w-full text-left font-bold">
           <div className="flex flex-row">
             <div className="flex flex-col">
-              <div className="" style={{ width: 100, fontSize: 12 }}>
+              <div className="" style={{ width: 150, fontSize: 12, padding: 20 }}>
                 <div className="h_radio">Sort By</div>
                 <div
                   onClick={() => setSort("views")}
-                  className={`radio_item ${sort === "views" && "active"}`}
+                  className={`bord-top radio_item ${sort === "views" && "active"}`}
                 >
                   Views
                 </div>
                 <div
                   onClick={() => setSort("newest")}
-                  className={`radio_item ${sort === "newest" && "active"}`}
+                  className={`bord-bot radio_item ${sort === "newest" && "active"}`}
                 >
                   Newest
                 </div>
 
                 <div className="h_radio">Type</div>
-                <div className="radio_item active"> Images</div>
-                <div className="radio_item disabled"> Text</div>
+                <div className="bord-top radio_item active"> Images</div>
+                <div className="bord-bot radio_item disabled"> Text</div>
 
                 <div className="h_radio">Generators</div>
                 <div
                   onClick={() => setAiType("all")}
-                  className={`radio_item ${aiType === "all" && "active"}`}
+                  className={`radio_item bord-top ${aiType === "all" && "active"}`}
                 >
                   All
                 </div>
@@ -233,7 +231,7 @@ export const MarketView: FC = ({}) => {
                 </div>
                 <div
                   onClick={() => setAiType("stable_diffusion")}
-                  className={`radio_item ${
+                  className={`bord-bot radio_item ${
                     aiType === "stable_diffusion" && "active"
                   }`}
                 >
@@ -243,7 +241,7 @@ export const MarketView: FC = ({}) => {
             </div>
             <div className="flex flex-col">
               <div
-                className="flex flex-row justify-center"
+                className="flex flex-row "
                 style={{ flexWrap: "wrap" }}
               >
                 {data.map((item, index) => (
