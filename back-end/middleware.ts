@@ -261,7 +261,7 @@ export const fetchPrompts = async (req, res, next) => {
     }
 
     const rows = await res.locals.db.all(
-      `SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM prompts WHERE thumbnail IS NOT NULL${filterAi}ORDER BY ${sort} DESC LIMIT ? OFFSET ?`,
+      `SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM prompts WHERE scraped IS NULL AND thumbnail IS NOT NULL${filterAi}ORDER BY ${sort} DESC LIMIT ? OFFSET ?`,
       25,
       offset
     );
