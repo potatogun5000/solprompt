@@ -267,7 +267,7 @@ export const fetchPrompts = async (req, res, next) => {
     );
 
     const count = await res.locals.db.get(
-      `SELECT COUNT(*) FROM prompts WHERE thumbnail IS NOT NULL${filterAi}`
+      `SELECT COUNT(*) FROM prompts WHERE scraped IS NULL AND thumbnail IS NOT NULL${filterAi}`
     );
 
     res.send({
