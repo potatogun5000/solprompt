@@ -101,7 +101,6 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   app.get("/prompts", fetchPrompts);
 
   app.get("/v2/listing/:id", getListingV2);
-  app.get("/listing/:id", getListing);
 
   app.get("/buyer/:address/:sig", getOwnedListings);
 

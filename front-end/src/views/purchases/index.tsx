@@ -29,25 +29,6 @@ export const PurchasesView: FC = ({}) => {
   const [select, setSelected] = useState(0);
   const [aiSettings, setAiSettings] = useState({});
   const didLogRef = useRef(false);
-  const [imageMap, setImageMap] = useState({})
-
-  const getImages = async (json) => {
-    let promizes = [];
-    for(let i =0; i < json.length; i++){
-      promizes.push(
-        fetch(`${process.env.NEXT_PUBLIC_API_SERVER}/listing/${json[i].listing_pda}`)
-      );
-    }
-    const resolved = await Promise.all(promizes);
-
-    let iMap = {}
-    for(let i = 0; i < resolved.length; i++){
-      const resv = await resolved[i].json();
-      iMap[resv.listing_pda] = resv.images[0]
-    }
-
-    setImageMap(iMap)
-  }
 
   const getOwnedListings = async () => {
     try {
@@ -81,7 +62,6 @@ export const PurchasesView: FC = ({}) => {
       );
       const json = await response.json();
       setListings(json);
-      getImages(json);
     } catch (err) {
       notify({ type: "error", message: err.message });
     }
@@ -145,11 +125,7 @@ export const PurchasesView: FC = ({}) => {
           {listings.length ?
             listings.map((item, index) => (
               <div key={`ite2-${index}`} className="flex flex-row mt-5" style={{ height: 100}} >
-                {
-                imageMap.hasOwnProperty(item.listing_pda) ?
-                  <Image src={`${process.env.NEXT_PUBLIC_API_SERVER}/static/${imageMap[item.listing_pda]}`} alt="idc" width={100} height={30} style={{marginRight:50}} />
-                : <div>...</div>
-                }
+                  <Image src={item.thumbnail} alt="idc" width={100} height={30} style={{marginRight:50}} />
                 <h1 className="flex-1">{unescape(item.title)}</h1>
                 <h2 className="flex-1">
                   <Link style={{color:'#00adff', textDecoration: 'underline'}} target="_blank" href={`https://solscan.io/account/${item.owner}`}>{item.owner.slice(0,5)}...{item.owner.slice(-5)}</Link>
