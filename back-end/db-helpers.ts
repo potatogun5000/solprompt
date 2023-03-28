@@ -45,7 +45,7 @@ export const createTables = async (db) => {
 export const thumbnailLoop = async (db, connection) => {
   try {
     const result = await db.all(
-      "SELECT listing_pda FROM prompts WHERE approved = 1 AND confirmed = 1 AND thumbnail IS NULL AND scraped IS NULL"
+      "SELECT listing_pda FROM prompts WHERE approved = 1 AND confirmed = 1 AND thumbnail IS NULL"
     );
 
     console.log(result.length);
