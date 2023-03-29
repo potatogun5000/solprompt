@@ -7,42 +7,9 @@ import Text from "../../components/Text";
 import b58 from "b58";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
-
-const Listing = (props): JSX.Element => {
-  const { title, thumbnail, listingPda, aiSettings, price, aiType } = props as any;
-
-  return (
-    <Link
-      className="hover:border-gray-700 border-transparent border-2 hover:border-current"
-      href={`/promps?id=${listingPda}`}
-      style={{margin: 10}}
-    >
-      <div style={{ width: "100%" }}>
-        <div
-          style={{
-            width: "200px",
-            height: "200px",
-            position: "relative",
-          }}
-        >
-          <Image
-            alt="idc"
-            src={
-              thumbnail
-            }
-            layout="fill"
-            objectFit="cover"
-            style={{borderTopRightRadius:10}}
-          />
-          <div style={{zIndex: 3, fontSize:12,  textTransform: 'uppercase', position: 'absolute', padding: 5, paddingBottom:2, top: 0, width: 100, textAlign: 'right', borderRadius: 5, right: 0, textShadow:'0px 0px 20px #000, 0px 0px 6px #000, 0px 0px 20px #000, 0px 0px 6px #000'}}>{price} SOL</div>
-
-        <div style={{zIndex: 2, fontSize:12,  textTransform: 'uppercase', position: 'absolute', padding: 5, paddingBottom:2, bottom: 0, width: '100%', backgroundColor: '#000000a8', textAlign: 'center'}}>{aiType.replace('_', ' ')}</div>
-
-        </div>
-      </div>
-    </Link>
-  );
-};
+import {
+  Listing
+} from "../../components/ListingThumb";
 
 const bgImages = [
   "bg0.png",
@@ -160,21 +127,21 @@ export const HomeView: FC = ({}) => {
               textShadow: '0 0 11px black'
             }}
           >
-            <h1 className="cursive_font text-center text-lg ml-1 text-white bg-clip-text text-left font-light">
+            <h1 className="cursive_font text-center text-lg ml-1 text-white bg-clip-text text-left ">
               The #1 prompt marketplace
             </h1>
-            <h1 className="title_font text-center text-5xl font-bold text-white bg-clip-text mb-1 ">
+            <h1 className="title-font text-center text-5xl font-bold text-white bg-clip-text mb-1 ">
               Marketplace of the Future
             </h1>
             <h1
-              className="cursive_font text-center text-lg ml-1 text-white bg-clip-text mb-4 text-left font-light"
+              className="cursive_font text-center text-lg ml-1 text-white bg-clip-text mb-4 text-left "
               style={{
                 textShadow: "rgb(225 0 176) 3px 2px 5px",
               }}
             >
               Built on Solana
             </h1>
-            <p className="cursive_font text-center pt-10 text-2xl text-white bg-clip-text mb-4 text-left font-light hidden md:block">
+            <p className="cursive_font text-center pt-10 text-2xl text-white bg-clip-text mb-4 text-left hidden md:block">
               We support DALL·E, GPT, Midjourney, Stable Diffusion, ChatGPT
             </p>
           </div>
@@ -234,22 +201,25 @@ export const HomeView: FC = ({}) => {
         <div className="w-full text-left font-bold">
           <h1 style={{ textAlign: "center", fontSize: 20, letterSpacing: 1 }}>
             <span style={{fontSize:12, color:'purple', marginRight: 10, visibility:'hidden'}}>(view all)</span>
-            Featured
+            <span className="title-font">Featured</span>
             <Link href="/market" style={{fontSize:12, marginLeft: 10, color:'#1c86c5'}}>(view all)</Link>
           </h1>
           <div
-            className="flex flex-row justify-center pt-5"
-            style={{  }}
+            className="flex flex-row justify-start pt-5"
+            style={{width:'100%', overflowY: 'hidden', overflowX: 'scroll'}}
           >
             {featured.slice(0, 12).map((item, index) => (
               <Listing
-                thumbnail={item.thumbnail}
-                title={item.title}
-                listingPda={item.listing_pda}
-                aiSettings={item.ai_settings}
-                price={item.price}
-                aiType={item.ai_type}
-              />
+                    className="flex"
+                    aiType={item.ai_type}
+                    views={item.views}
+                    saves={item.saves}
+                    thumbnail={item.thumbnail}
+                    title={item.title}
+                    listingPda={item.listing_pda}
+                    aiSettings={item.ai_settings}
+                    price={item.price}
+                  />
             ))}
           </div>
         </div>
@@ -275,16 +245,17 @@ export const HomeView: FC = ({}) => {
             marginTop: 30,
             fontWeight: "bold",
           }}
+          className="title-font"
         >
           Why Sell With Us
         </h1>
           <ul style={{padding:25, display:'flex', flexDirection:'column', justifyContent: 'space-around', height:'100%'}}>
-            <li><strong>Reach diverse customers:</strong> Access a vast, varied audience within the web3 ecosystem.</li>
-            <li><strong>Easy listing creation:</strong> Quickly showcase your AI prompts with user-friendly tools.</li>
-            <li><strong>Instant earnings:</strong> Sell prompts and effortlessly withdraw your cryptocurrency earnings.</li>
-            <li><strong>Web3 transparency:</strong> Experience 100% transparency in all transactions with web3 integration.</li>
-            <li><strong>Hassle-free payments:</strong> Accept cryptocurrencies seamlessly without complex payment systems.</li>
-            <li><strong>Global community:</strong> Connect, collaborate, and learn from AI enthusiasts worldwide.</li>
+            <li>Access a vast, varied audience within the web3 ecosystem.</li>
+            <li>Quickly showcase your AI prompts with user-friendly tools.</li>
+            <li>Sell prompts and effortlessly withdraw your cryptocurrency earnings.</li>
+            <li>Experience 100% transparency in all transactions with web3 integration.</li>
+            <li>Accept cryptocurrencies seamlessly without complex payment systems.</li>
+            <li>Connect, collaborate, and learn from AI enthusiasts worldwide.</li>
           </ul>
         </div>
         <div style={{width:'50%'}}>
@@ -302,6 +273,7 @@ export const HomeView: FC = ({}) => {
                 style={{ width: "100%", borderTopRightRadius: 10, filter: 'brightness(0.7)'}}
               />
               <div
+                className="title-font"
                 style={{
                   textAlign: "center",
                   padding: 10,
@@ -332,6 +304,7 @@ export const HomeView: FC = ({}) => {
                 style={{ width: "100%", borderTopRightRadius: 10, filter: 'brightness(0.7)'}}
               />
               <div
+                className="title-font"
                 style={{
                   textAlign: "center",
                   padding: 10,
@@ -363,22 +336,25 @@ export const HomeView: FC = ({}) => {
         <div className="w-full text-left font-bold">
           <h1 style={{ textAlign: "center", fontSize: 20, letterSpacing: 1 }}>
             <span style={{fontSize:12, color:'purple', marginRight: 10, visibility:'hidden'}}>(view all)</span>
-            Hottest
+            <span className="title-font">Hottest</span>
             <Link href="/market" style={{fontSize:12, marginLeft: 10, color:'#1c86c5'}}>(view all)</Link>
           </h1>
           <div
-            className="flex flex-row justify-center pt-5"
-            style={{  }}
+            className="flex flex-row justify-start pt-5"
+            style={{width:'100%', overflowY: 'hidden', overflowX: 'scroll'}}
           >
             {hottest.slice(0, 12).map((item, index) => (
               <Listing
-                thumbnail={item.thumbnail}
-                title={item.title}
-                listingPda={item.listing_pda}
-                aiSettings={item.ai_settings}
-                price={item.price}
-                aiType={item.ai_type}
-              />
+                    className="flex"
+                    aiType={item.ai_type}
+                    views={item.views}
+                    saves={item.saves}
+                    thumbnail={item.thumbnail}
+                    title={item.title}
+                    listingPda={item.listing_pda}
+                    aiSettings={item.ai_settings}
+                    price={item.price}
+                  />
             ))}
           </div>
         </div>

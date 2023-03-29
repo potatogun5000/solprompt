@@ -6,12 +6,30 @@ import { AppBar } from '../components/AppBar';
 import { ContentContainer } from '../components/ContentContainer';
 import { Footer } from '../components/Footer';
 import Notifications from '../components/Notification'
+import { Inter, Roboto } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] });
+const roboto = Roboto({
+  weight: '400',
+  subsets: ['latin'],
+})
+
+
 require('@solana/wallet-adapter-react-ui/styles.css');
 require('../styles/globals.css');
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
     return (
         <>
+          <style jsx global>{`
+            html {
+              font-family: ${roboto.style.fontFamily};
+            }
+            .title-font {
+              font-family: ${inter.style.fontFamily};
+            }
+
+          `}</style>
           <Head>
             <title>Sol Prompt - Marketplace</title>
           </Head>

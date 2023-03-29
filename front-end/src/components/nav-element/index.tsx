@@ -51,7 +51,7 @@ const NavElement = ({
             )}
             onClick={() => navigationStarts()}
         >
-            <div className="flex flex-row items-center gap-3">
+            <div className="title-font flex flex-row items-center gap-3">
                 <Text variant="nav"> {label} </Text>
             </div>
             <div ref={divRef} />

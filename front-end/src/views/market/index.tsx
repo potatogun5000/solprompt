@@ -5,106 +5,23 @@ import pkg from "../../../package.json";
 import Text from "../../components/Text";
 import b58 from "b58";
 import styled from 'styled-components';
+import {
+  Listing
+} from "../../components/ListingThumb";
+const ItemAmountLabel = styled.h1`
+  text-align: center;
+  font-weight: normal;
+  font-size: 12px;
+  margin-bottom: 15px;
+`;
 
 const HeaderM = styled.div`
   font-size: 25px;
   padding-top: 25px;
   padding-bottom: 25px;
   margin-left: 155px;
+  font-weight: bold;
 `;
-
-const ListingCard = styled.div`
-  width: 250px;
-  height: 390px;
-  margin-right: 10px;
-  background-color: #0a0a0a;
-  padding-top: 20px;
-  border-radius: 15px;
-
-  .image-holder{
-    width: 210px;
-    height: 230px;
-    position: relative;
-    margin: 0 auto;
-  }
-  .text-holder {
-    padding: 20px;
-  }
-
-  .title-header{
-    height: 30px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    font-size: 13px;
-  }
-
-  .price-header{
-    margin-top: 2px;
-    font-size: 12px;
-    color: #8c82ff;
-  }
-
-  .grey {
-    color: grey;
-  }
-
-  .cap {
-    text-transform: capitalize;
-  }
-
-  hr{
-        height: 1px;
-        background-color: #545454;
-        border: none;
-        margin-top:10px;
-        margin-bottom: 10px;
-  }
-`;
-
-const Listing = (props): JSX.Element => {
-  const {
-    views,
-    saves,
-    thumbnail,
-    title,
-    listingPda,
-    aiSettings,
-    price,
-    aiType,
-  } = props as any;
-
-  return (
-    <Link
-      target="_blank"
-      className="p-1"
-      href={`/detail?id=${listingPda}`}
-    >
-      <ListingCard>
-        <div className="image-holder">
-          <Image
-            key={thumbnail}
-            alt="idc"
-            src={thumbnail}
-            layout="fill"
-            objectFit="cover"
-            style={{ borderRadius: 15 }}
-          />
-        </div>
-        <div className="text-holder">
-          <h1 className="title-header">{unescape(title)}</h1>
-          <h1 className="price-header cap">{aiType.split('_').join(' ')} <span className="grey"></span></h1>
-          <h1 className="price-header"><span className="grey">price: </span> {price} SOL</h1>
-          <hr/>
-          <div className="flex flex-row justify-between text-sm grey">
-            <h1></h1>
-            <h1>{views} views</h1>
-          </div>
-        </div>
-      </ListingCard>
-    </Link>
-  );
-};
 
 const ITEM_LIMIT = 25;
 
@@ -189,7 +106,7 @@ export const MarketView: FC = ({}) => {
   return (
     <div className="p-4">
       <div className="flex flex-col">
-        <HeaderM>
+        <HeaderM className="title-font">
           Marketplace
         </HeaderM>
         <div className="w-full text-left font-bold">
@@ -258,8 +175,10 @@ export const MarketView: FC = ({}) => {
                   />
                 ))}
               </div>
-              <div className="justify-center flex flex-row" style={{
-                  marginTop: 25,
+              <div className="font-bold justify-center flex flex-row justify-between" style={{
+                  width: 300,
+                  margin: '0 auto',
+                  marginTop:50
                 }}>
                 <div
                 onClick={() => setCurrentPage(0)}
