@@ -48,7 +48,7 @@ export const thumbnailLoop = async (db, connection) => {
       "SELECT listing_pda FROM prompts WHERE approved = 1 AND confirmed = 1 AND thumbnail IS NULL"
     );
 
-    console.log(result.length);
+    console.log('thumbnail', result.length);
 
     let secretKey = Uint8Array.from(JSON.parse(process.env.SHADOW_KEY));
     let keypair = Keypair.fromSecretKey(secretKey);
@@ -116,6 +116,7 @@ export const imageCdnLoop = async (db, connection) => {
     const result = await db.all(
       "SELECT filename FROM images WHERE cdn is NULL"
     );
+    console.log('imagecdn', result.length);
 
     let secretKey = Uint8Array.from(JSON.parse(process.env.SHADOW_KEY));
     let keypair = Keypair.fromSecretKey(secretKey);
@@ -157,6 +158,7 @@ export const approvedCacheLoop = async (db, memoryCache) => {
     const result = await db.all(
       "SELECT * FROM prompts WHERE approved = 1 AND confirmed = 1 AND scraped is NULL AND thumbnail IS NOT NULL"
     );
+    console.log('approved cache', result.length);
 
     memoryCache.approved = result;
   } catch (error) {
@@ -171,8 +173,7 @@ export const approvePromptsLoop = async (db, connection) => {
     const result = await db.all(
       "SELECT * FROM prompts WHERE approved = 0 AND confirmed = 1"
     );
-
-    console.log(result.length);
+    console.log('approved prompt', result.length);
 
     for (let i = 0; i < result.length; i++) {
       try {
@@ -205,6 +206,7 @@ export const approvePromptsLoop = async (db, connection) => {
 export const confirmPromptsLoop = async (db, connection) => {
   try {
     const result = await db.all("SELECT * FROM prompts WHERE confirmed = 0");
+    console.log('confirm prompt', result.length);
 
     for (let i = 0; i < result.length; i++) {
       try {
