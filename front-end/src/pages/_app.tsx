@@ -24,9 +24,11 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
           <style jsx global>{`
             html {
               font-family: ${roboto.style.fontFamily};
+              letter-spacing: 1px;
             }
             .title-font {
               font-family: ${inter.style.fontFamily};
+              letter-spacing: 1px;
             }
 
           `}</style>

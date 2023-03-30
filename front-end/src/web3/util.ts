@@ -276,3 +276,12 @@ export const sendTx = async (program, provider, wallet, tx) => {
 
   return signature;
 };
+
+export const validateSolanaAddress = async (addr: string) => {
+  try {
+    const publicKey = new PublicKey(addr);
+    return await PublicKey.isOnCurve(publicKey.toBytes());
+  } catch (err) {
+    return false;
+  }
+};

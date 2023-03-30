@@ -6,6 +6,7 @@ const ListingCard = styled.div`
   width: 250px;
   height: 390px;
   margin-right: 10px;
+  margin-bottom: 10px;
   background-color: #0a0a0a;
   padding-top: 20px;
   border-radius: 15px;
@@ -94,7 +95,7 @@ export const Listing = (props): JSX.Element => {
         <div className="text-holder">
           <h1 className="title-header title-font">{unescape(title)}</h1>
           <h1 className="price-header cap">{aiType.split('_').join(' ')} <span className="grey"></span></h1>
-          <h1 className="price-header"><span className="grey">price: </span> {price} SOL</h1>
+          <h1 className="price-header"><span className="grey">price: </span> {price === "0" ? "FREE" : `${price} SOL`}</h1>
           <hr/>
           <div className="flex flex-row justify-between text-sm grey">
             <h1></h1>

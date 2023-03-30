@@ -7,11 +7,9 @@
 }
 
 .title_font {
-  letter-spacing: 1px;
 }
 
 .cursive_font {
-  letter-spacing: 1px;
   text-transform: uppercase;
   font-size: 13px;
   font-weight: normal;
@@ -28,7 +26,6 @@ th {
 .table_header {
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .table_content {
@@ -113,6 +110,13 @@ a {
   color: grey;
 }
 
+.pagespacer {
+  width: 60px;
+  margin-top: 5px;
+  padding: 15px;
+  text-align: center;
+  font-size: 12px;
+}
 
 .page {
   width: 60px;
@@ -138,9 +142,7 @@ a {
 }
 
 .page-disable {
-  color: grey;
-  border-color: grey;
-  cursor: not-allowed;
+  visibility: hidden;
 }
 
 

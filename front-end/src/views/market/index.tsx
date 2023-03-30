@@ -53,7 +53,6 @@ export const MarketView: FC = ({}) => {
         ac.push(i);
       }
 
-
       const max = Math.ceil(totalItems/ITEM_LIMIT);
 
       for(let i = ac.length-1; i >= 0; i--){
@@ -63,6 +62,23 @@ export const MarketView: FC = ({}) => {
         if(ac[i] >= max)
           ac.splice(i,1)
       }
+
+      for(let i = ac[ac.length-1]+1; i < max; i++){
+        if(i<5){
+          ac.push(i);
+        }else{
+          break;
+        }
+      }
+
+      for(let i = ac[0]; i > 0; i--){
+        if(ac.length < 5){
+          ac = [i, ...ac];
+        }else{
+          break;
+        }
+      }
+
 
       setPages(ac);
       getPromps(currentPage);
@@ -175,16 +191,22 @@ export const MarketView: FC = ({}) => {
                   />
                 ))}
               </div>
-              <div className="font-bold justify-center flex flex-row justify-between" style={{
+              <div className="font-bold justify-center flex flex-row " style={{
                   width: 300,
                   margin: '0 auto',
                   marginTop:50
                 }}>
                 <div
                 onClick={() => setCurrentPage(0)}
-                className={`page ${currentPage === 0 && 'page-disable'}`}>
-                  First
+                className={`page ${pages[0] === 0 && 'page-disable'}`}>
+                  1
                 </div>
+                <div
+                onClick={() => setCurrentPage(0)}
+                className={`pagespacer ${pages[0] === 0 && 'page-disable'}`}>
+                  ...
+                </div>
+
                 {pages.map((p, index) => (
                   <div
                     onClick={() => setCurrentPage(p)}
@@ -194,9 +216,13 @@ export const MarketView: FC = ({}) => {
                   </div>
                 ))}
                 <div
+                  className={`pagespacer ${pages[pages.length-1] === Math.floor(totalItems/ITEM_LIMIT) && 'page-disable'}`}>
+                  ...
+                </div>
+                <div
                   onClick={() => setCurrentPage(Math.floor(totalItems/ITEM_LIMIT))}
-                  className={`page ${currentPage === Math.floor(totalItems/ITEM_LIMIT) && 'page-disable'}`}>
-                  Last
+                  className={`page ${pages[pages.length-1] === Math.floor(totalItems/ITEM_LIMIT) && 'page-disable'}`}>
+                  {Math.floor(totalItems/ITEM_LIMIT)+1}
                 </div>
               </div>
             </div>
