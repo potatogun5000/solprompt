@@ -36,7 +36,16 @@ import {
 import { Connection } from "@solana/web3.js";
 import cors from "cors";
 import * as dotenv from "dotenv";
+import rateLimit from 'express-rate-limit'
 dotenv.config();
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -76,6 +85,7 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   approvedCacheLoop(db, memoryCache);
   thumbnailLoop(db, connection);
 
+  app.use(limiter);
   app.use(cors());
   app.use("/static", express.static(publicFolder));
   app.use(bodyParser.json());
