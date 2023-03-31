@@ -85,7 +85,6 @@ if (!fs.existsSync(`./${publicFolder}`)) {
   approvedCacheLoop(db, memoryCache);
   thumbnailLoop(db, connection);
 
-  app.use(limiter);
   app.use(cors());
   app.use("/static", express.static(publicFolder));
   app.use(bodyParser.json());
