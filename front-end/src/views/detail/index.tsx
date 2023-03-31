@@ -29,6 +29,8 @@ import {
 } from "../../web3/util";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
+import { encode, decode } from "b58";
+
 
 export const DetailView: FC = ({}) => {
   const { connection } = useConnection();
@@ -58,10 +60,12 @@ export const DetailView: FC = ({}) => {
   const handleListing = async (program, provider, pda) => {
     const validated = await validateSolanaAddress(pda);
     let price = 0;
+    console.log(validated);
     if (validated) {
       const item = await getListing(program, provider, pda);
-      setPrice(Number(item.price));
+      price = parseFloat(item.price);
     }
+    setPrice(price);
   };
 
   const handleBuyListing = async () => {
@@ -88,6 +92,27 @@ export const DetailView: FC = ({}) => {
     }
     setLoading(false);
   };
+
+  const downloadFree = async () => {
+    const _aiSettings = JSON.parse(
+        decode(listing.ai_settings).toString()
+      );
+
+    const fileText = JSON.stringify({
+      title: unescape(listing.title),
+      settings: _aiSettings,
+      prompt: unescape(listing.prompt),
+      instructions: unescape(listing.instructions)
+    }, null, 4);
+
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileText));
+    element.setAttribute('download', `${unescape(listing.title).split(' ').join('-')}-prompt.txt`);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
 
   useEffect(() => {
     if (provider && program && !loaded) {
@@ -160,14 +185,28 @@ export const DetailView: FC = ({}) => {
                 <div className="p-3 text-lg">
                   {price === 0 ? null : `${(price / LAMPORTS_PER_SOL).toFixed(2)} SOL`}
                 </div>
+            {
+              price === 0
+                ?
+                <button
+                  disabled={loading}
+                  onClick={downloadFree}
+                  className="btn px-10 text-lg"
+                  style={{ backgroundColor: "#7075d3" }}
+                >
+                  Free Download
+                </button>
+                :
                 <button
                   disabled={loading}
                   onClick={handleBuyListing}
                   className="btn px-10 text-lg"
                   style={{ backgroundColor: "#7075d3" }}
                 >
-                  {loading ? "loading" : price === 0 ? "download" : "purchase"}
+                  Purchase
                 </button>
+
+                }
               </div>
               <h1 style={{ fontSize: 10, margin: 35 }}>
                 {

@@ -280,7 +280,7 @@ export const sendTx = async (program, provider, wallet, tx) => {
 export const validateSolanaAddress = async (addr: string) => {
   try {
     const publicKey = new PublicKey(addr);
-    return await PublicKey.isOnCurve(publicKey.toBytes());
+    return true;
   } catch (err) {
     return false;
   }

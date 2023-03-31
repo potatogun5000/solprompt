@@ -144,6 +144,21 @@ export const getOwnedListings = async (req, res, next) => {
   }
 };
 
+export const getFreeListing = async (req, res, next) => {
+  const signatureUint8 = b58.decode(req.params.sig);
+  const message = new TextEncoder().encode("sign in solprompt");
+  const pubKeyUint8 = b58.decode(req.params.address);
+  const verified = nacl.sign.detached.verify(
+    message,
+    signatureUint8,
+    pubKeyUint8
+  );
+
+  if (!verified) throw new Error("not verified");
+
+  console.log("verified", verified);
+};
+
 export const doesExist = async (req, res, next) => {
   try {
     const result = await res.locals.db.get(
@@ -219,9 +234,11 @@ export const getListingV2 = async (req, res, next) => {
       `SELECT filename, cdn FROM images WHERE listing_pda = "${req.params.id}"`
     );
 
-    delete listingInfo.instructions;
-    delete listingInfo.prompt;
-    delete listingInfo.ai_settings;
+    if (listingInfo.price !== "0") {
+      delete listingInfo.instructions;
+      delete listingInfo.prompt;
+      delete listingInfo.ai_settings;
+    }
 
     res.send({
       ...listingInfo,
@@ -234,7 +251,7 @@ export const getListingV2 = async (req, res, next) => {
       listingInfo.id
     );
   } catch (error) {
-    res.send("does not exist");
+    console.log(error);
   }
 };
 
@@ -261,13 +278,13 @@ export const fetchPrompts = async (req, res, next) => {
     }
 
     const rows = await res.locals.db.all(
-      `SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM prompts WHERE scraped IS NULL AND thumbnail IS NOT NULL${filterAi}ORDER BY ${sort} DESC LIMIT ? OFFSET ?`,
+      `SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM prompts WHERE thumbnail IS NOT NULL${filterAi}ORDER BY ${sort} DESC LIMIT ? OFFSET ?`,
       25,
       offset
     );
 
     const count = await res.locals.db.get(
-      `SELECT COUNT(*) FROM prompts WHERE scraped IS NULL AND thumbnail IS NOT NULL${filterAi}`
+      `SELECT COUNT(*) FROM prompts WHERE thumbnail IS NOT NULL${filterAi}`
     );
 
     res.send({
