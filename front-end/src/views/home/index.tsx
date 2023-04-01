@@ -10,6 +10,38 @@ import { Carousel } from "react-responsive-carousel";
 import {
   Listing
 } from "../../components/ListingThumb";
+import styled from "styled-components"
+
+const BGC = styled.div`
+  background-image: ${props => props.src ? `url(${props.src})`: "none"};
+  background-size: cover;
+  height: 150px;
+  border-radius: 10px;
+  filter: brightness(50%) hue-rotate(267deg);
+`;
+
+const CategoryBox = styled.div`
+  flex:1;
+  margin: 20px;
+  text-align: center;
+  height: 150px;
+  position: relative;
+  .cat-title {
+    font-weight: bold;
+    font-size: 18px;
+    position: absolute;
+    left: 0px;
+    width: 100%;
+    top: 60px;
+    z-index: 10;
+  }
+
+  &:hover ${BGC} {
+    filter: brightness(100%) hue-rotate(267deg);
+  }
+
+  cursor: pointer;
+`;
 
 const bgImages = [
   "bg0.png",
@@ -19,6 +51,26 @@ const bgImages = [
   "bg4.png",
   "bg5.png",
 ];
+
+const categories = [{
+  name:"Photography",
+  src:"/c_photography.png"
+},{
+  name:"Cartoons",
+  src:"/c_cartoon.png",
+},{
+  name:"Painting",
+  src:"/c_painting.png",
+}, {
+  name:"Graphics",
+  src:"/c_graphics.png",
+}, {
+  name:"Artwork",
+  src:"/c_artwork.png"
+}, {
+  name: "Logos",
+  src:"/c_logos.png"
+}];
 
 const comicImages = [
   {
@@ -198,6 +250,27 @@ export const HomeView: FC = ({}) => {
           maxWidth: 1000,
         }}
       >
+        <h1 style={{ fontWeight: 'bold', textAlign: "center", fontSize: 20, letterSpacing: 1 }}>
+            <span className="title-font">Categories</span>
+        </h1>
+
+        <div className="w-full flex flex-row justify-between" style={{marginTop:5, marginBottom: 0}}>
+          {categories.slice(0,3).map( a => (
+            <CategoryBox>
+                <div className="cat-title title-font">{a.name}</div>
+                <BGC src={a.src}></BGC>
+            </CategoryBox>
+          ))}
+        </div>
+        <div className="w-full flex flex-row justify-between" style={{marginTop:0, marginBottom: 25}}>
+          {categories.slice(3,6).map( a => (
+            <CategoryBox>
+                <div className="cat-title title-font">{a.name}</div>
+                <BGC src={a.src}></BGC>
+            </CategoryBox>
+          ))}
+        </div>
+
         <div className="w-full text-left font-bold">
           <h1 style={{ textAlign: "center", fontSize: 20, letterSpacing: 1 }}>
             <span style={{fontSize:12, color:'purple', marginRight: 10, visibility:'hidden'}}>(view all)</span>
