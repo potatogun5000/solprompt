@@ -296,6 +296,43 @@ export const fetchPrompts = async (req, res, next) => {
   }
 };
 
+export const createTags = async (req, res, next) => {
+  try {
+    const listing_pda = req.params.listing_pda;
+    const tags = req.body.tags;
+
+    for await (const tag of tags) {
+      await res.locals.db.run("INSERT INTO tags VALUES(?, ?)", listing_pda, tags);
+    }
+
+    res.send("done");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getTags = async (req, res, next) => {
+  try {
+    const listing_pda = req.params.id;
+
+    const tags = await res.locals.db.all(
+      "SELECT text FROM tags WHERE listing_pda = ?",
+      listing_pda
+    );
+
+    res.send(tags.map(t=>t.text));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createTestTags = async (req, res, next) => {
+  await res.locals.db.exec('INSERT INTO tags VALUES("dog", "cat")');
+  await res.locals.db.exec('INSERT INTO tags VALUES("dog", "mouse")');
+  await res.locals.db.exec('INSERT INTO tags VALUES("dog", "rat")');
+  res.send('done');
+}
+
 export const fetchRandomPrompts = async (req, res, next) => {
   try {
     const rows = await res.locals.db.all(

@@ -24,10 +24,13 @@ import {
   fetchPrompts,
   getListingV2,
   getOwnedListings,
+  createTestTags,
   getAllListings,
   uploadScrapedListing,
   getPendingListings,
   requireAdmin,
+  createTags,
+  getTags,
   setLocals,
   errorHandler,
   getApprovedListings,
@@ -106,8 +109,13 @@ if (!fs.existsSync(`./${publicFolder}`)) {
     validateListing,
     uploadListing
   );
+
+  app.get("/tags/test", createTestTags);
+  app.post("/tags/:id", requireAdmin, createTags);
+  app.get("/tags/:id", requireAdmin, getTags);
   app.get("/prompts/random", requireAdmin, fetchRandomPrompts);
   app.get("/prompts", fetchPrompts);
+
 
   app.get("/v2/listing/:id", getListingV2);
 
