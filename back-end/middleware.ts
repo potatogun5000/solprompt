@@ -298,11 +298,11 @@ export const fetchPrompts = async (req, res, next) => {
 
 export const createTags = async (req, res, next) => {
   try {
-    const listing_pda = req.params.listing_pda;
+    const listing_pda = req.params.id;
     const tags = req.body.tags;
 
     for await (const tag of tags) {
-      await res.locals.db.run("INSERT INTO tags VALUES(?, ?)", listing_pda, tags);
+      await res.locals.db.run("INSERT INTO tags VALUES(?, ?)", listing_pda, tag);
     }
 
     res.send("done");
@@ -327,9 +327,9 @@ export const getTags = async (req, res, next) => {
 };
 
 export const createTestTags = async (req, res, next) => {
-  await res.locals.db.exec('INSERT INTO tags VALUES("dog", "cat")');
-  await res.locals.db.exec('INSERT INTO tags VALUES("dog", "mouse")');
-  await res.locals.db.exec('INSERT INTO tags VALUES("dog", "rat")');
+  await res.locals.db.run('INSERT INTO tags VALUES("dog", "cat")');
+  await res.locals.db.run('INSERT INTO tags VALUES("dog", "mouse")');
+  await res.locals.db.run('INSERT INTO tags VALUES("dog", "rat")');
   res.send('done');
 }
 
