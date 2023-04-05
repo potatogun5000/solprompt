@@ -66,22 +66,28 @@ const bgImages = [
 
 const categories = [{
   name:"Photography",
-  src:"/c_photography.png"
+  src:"/c_photography.png",
+  tag:"photography"
 },{
   name:"Cartoons",
   src:"/c_cartoon.png",
+  tag:"cartoons"
 },{
-  name:"Painting",
+  name:"Art",
   src:"/c_painting.png",
+  tag:"Art"
 }, {
   name:"Graphics",
   src:"/c_graphics.png",
+  tag:"graphics"
 }, {
-  name:"Artwork",
-  src:"/c_artwork.png"
+  name:"Technology",
+  src:"/c_artwork.png",
+  tag:"technology"
 }, {
   name: "Logos",
-  src:"/c_logos.png"
+  src:"/c_logos.png",
+  tag:"logo"
 }];
 
 const comicImages = [
@@ -252,7 +258,6 @@ export const HomeView: FC = ({}) => {
           </div>
         </div>
       </div>*/}
-
       <div
         className="flex flex-col"
         style={{
@@ -265,21 +270,24 @@ export const HomeView: FC = ({}) => {
         <h1 style={{ fontWeight: 'bold', textAlign: "center", fontSize: 20, letterSpacing: 1 }}>
             <span className="title-font">Categories</span>
         </h1>
-
         <div className="w-full flex flex-row justify-between" style={{marginTop:5, marginBottom: 0}}>
           {categories.slice(0,3).map( a => (
-            <CategoryBox>
-                <div className="cat-title title-font">{a.name}</div>
-                <BGC src={a.src}></BGC>
-            </CategoryBox>
+              <CategoryBox>
+                <Link href={`/market?offset=0&sort=views&filter=all&tag=${a.tag}`}>
+                    <div className="cat-title title-font">{a.name}</div>
+                    <BGC src={a.src}></BGC>
+                </Link>
+              </CategoryBox>
           ))}
         </div>
         <div className="w-full flex flex-row justify-between" style={{marginTop:0, marginBottom: 25}}>
           {categories.slice(3,6).map( a => (
-            <CategoryBox>
-                <div className="cat-title title-font">{a.name}</div>
-                <BGC src={a.src}></BGC>
-            </CategoryBox>
+              <CategoryBox>
+                <Link href={`/market?offset=0&sort=views&filter=all&tag=${a.tag}`}>
+                  <div className="cat-title title-font">{a.name}</div>
+                  <BGC src={a.src}></BGC>
+                </Link>
+              </CategoryBox>
           ))}
         </div>
 

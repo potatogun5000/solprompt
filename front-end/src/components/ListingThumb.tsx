@@ -52,6 +52,8 @@ const ListingCard = styled.div`
   }
   .eye {
     filter: invert(1);
+    width: auto;
+    height: 15px;
   }
   .eye-h {
     display: flex;
@@ -87,9 +89,9 @@ export const Listing = (props): JSX.Element => {
             key={thumbnail}
             alt="idc"
             src={thumbnail}
-            layout="fill"
-            objectFit="cover"
-            style={{ borderRadius: 15 }}
+            fill={true}
+            sizes="100"
+            style={{ borderRadius: 15, objectFit:"cover"}}
           />
         </div>
         <div className="text-holder">

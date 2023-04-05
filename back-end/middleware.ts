@@ -276,16 +276,36 @@ export const fetchPrompts = async (req, res, next) => {
       default:
         filterAi = " ";
     }
+    let tag, rows, count;
 
-    const rows = await res.locals.db.all(
-      `SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM prompts WHERE thumbnail IS NOT NULL${filterAi}ORDER BY ${sort} DESC LIMIT ? OFFSET ?`,
-      25,
-      offset
-    );
+    if (req.query.tag && !req.query.tag.match(/^[a-z0-9]+$/i))
+      return next("not alphanumeric");
 
-    const count = await res.locals.db.get(
-      `SELECT COUNT(*) FROM prompts WHERE thumbnail IS NOT NULL${filterAi}`
-    );
+    if (req.query.tag && req.query.tag !== 'all') {
+      tag = req.query.tag;
+    }
+
+    if (tag) {
+      rows = await res.locals.db.all(
+        `SELECT * FROM tags LEFT JOIN prompts ON prompts.listing_pda = tags.listing_pda WHERE text LIKE ? AND thumbnail IS NOT NULL${filterAi}ORDER BY ${sort} DESC LIMIT ? OFFSET ?`,
+        tag,
+        25,
+        offset
+      );
+      count = await res.locals.db.get(
+        `SELECT COUNT(*) FROM tags LEFT JOIN prompts ON prompts.listing_pda = tags.listing_pda WHERE text LIKE ? AND thumbnail IS NOT NULL${filterAi}`,
+        tag
+      );
+    } else {
+      rows = await res.locals.db.all(
+        `SELECT title, listing_pda, price, ai_type, views, saves, description, owner, thumbnail FROM prompts WHERE thumbnail IS NOT NULL${filterAi}ORDER BY ${sort} DESC LIMIT ? OFFSET ?`,
+        25,
+        offset
+      );
+      count = await res.locals.db.get(
+        `SELECT COUNT(*) FROM prompts WHERE thumbnail IS NOT NULL${filterAi}`
+      );
+    }
 
     res.send({
       rows,
@@ -302,7 +322,11 @@ export const createTags = async (req, res, next) => {
     const tags = req.body.tags;
 
     for await (const tag of tags) {
-      await res.locals.db.run("INSERT INTO tags VALUES(?, ?)", listing_pda, tag);
+      await res.locals.db.run(
+        "INSERT INTO tags VALUES(?, ?)",
+        listing_pda,
+        tag
+      );
     }
 
     res.send("done");
@@ -320,7 +344,7 @@ export const getTags = async (req, res, next) => {
       listing_pda
     );
 
-    res.send(tags.map(t=>t.text));
+    res.send(tags.map((t) => t.text));
   } catch (error) {
     next(error);
   }
@@ -330,8 +354,8 @@ export const createTestTags = async (req, res, next) => {
   await res.locals.db.run('INSERT INTO tags VALUES("dog", "cat")');
   await res.locals.db.run('INSERT INTO tags VALUES("dog", "mouse")');
   await res.locals.db.run('INSERT INTO tags VALUES("dog", "rat")');
-  res.send('done');
-}
+  res.send("done");
+};
 
 export const fetchRandomPrompts = async (req, res, next) => {
   try {
