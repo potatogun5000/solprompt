@@ -102,7 +102,7 @@ Food
 Activities
 Objects
 Expressions
-Miscellaneous`.split('\n');
+Miscellaneous`.toLowerCase().split('\n');
 
 export const MarketView: FC = ({}) => {
   const [data, setData] = useState([]);
@@ -315,6 +315,7 @@ export const MarketView: FC = ({}) => {
                 <div
                   onClick={() => setTag(c)}
                   className={`bord-top radio_item ${tag=== c && "active"}`}
+                  style={{textTransform:'capitalize'}}
                 >
                   {c}
                 </div>
